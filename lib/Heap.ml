@@ -18,8 +18,7 @@ module type Queue_Base = sig
   val merge : t -> t -> t
   val of_list : elt list -> t
   val map: (elt -> elt) -> t -> t
-  val peek : t -> elt option
-  val pop : t -> t option
+  val step : t -> (elt * t) option
 end
 
 module type Queue = sig
@@ -27,18 +26,15 @@ module type Queue = sig
   val to_ordered_seq : t -> elt Seq.t
   val mem : elt -> t -> bool
   val sort : elt list -> elt list
+  val peek : t -> elt option
+  val pop : t -> t option
 end
 
 module AddOps(Q : Queue_Base) (*: Queue with type elt = Q.elt and type t = Q.t *) = struct
   include Q
-  let to_ordered_seq = 
-    let step h = match peek h, pop h with
-      | None, _ -> None
-      | Some x, Some h -> Some (x, h)
-      | _ -> assert false
-    in
-    Seq.unfold step 
-
+  let to_ordered_seq = Seq.unfold step 
+  let peek t = Option.map fst @@ step t
+  let pop t = Option.map snd @@ step t
   let mem x heap = heap |> to_arbitrary_seq |> List.of_seq |> List.mem x
   let sort l = l |> of_list |> to_ordered_seq |> List.of_seq
 end
@@ -55,11 +51,10 @@ module LeftistTreeMake(Ord: OrderedType) =
     let size = BinaryTree.size
     let svalue = function
       | Empty -> -1
-      | Node ((s, _), _,  _) -> s
-                              
+      | Node ((s, _), _,  _) -> s                          
     let rec merge a b = match (a, b) with
       | Empty, x | x, Empty -> x
-      | a, b when svalue a > svalue b -> merge b a
+      | Node ((_, va), _, _), Node ((_, vb), _, _) when Ord.compare va vb > 0 -> merge b a
       | Node((_, x), l, r), b -> 
          let r = merge r b in
          (* of l and r, the subtree with the larger s-value goes to the left *)
@@ -68,8 +63,7 @@ module LeftistTreeMake(Ord: OrderedType) =
 
     let leaf elt = BinaryTree.leaf (0, elt)
     let push elt = merge (leaf elt) 
-    let peek tree = BinaryTree.node_func (fun (_, x) _ _ -> x) tree
-    let pop tree = BinaryTree.node_func (fun _ l r -> merge l r) tree
+    let step = BinaryTree.node_func (fun (_, x) l r -> (x, merge l r)) 
     let to_arbitrary_seq tree = BinaryTree.to_arbitrary_seq @@ _forget tree
     let of_list l =
       (* Inserting all elements one-by-one is inefficient. Instead, we do some kind of
@@ -105,8 +99,7 @@ module SkewHeapMake(Ord: OrderedType) =
            Node(vb, merge rb a, lb)
 
     let push elt = merge (BinaryTree.leaf elt) 
-    let pop heap = BinaryTree.node_func (fun _ l r -> merge l r) heap
-    let peek heap = BinaryTree.node_func (fun v _ _ -> v) heap
+    let step heap = BinaryTree.node_func (fun v l r -> (v, merge l r)) heap
     let rec merge_in_pairs = function
       | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)
       | [hd] -> hd
@@ -145,9 +138,7 @@ module PairingHeapMake(Ord: OrderedType) =
       | [hd] -> Some hd
       | [] -> None
             
-    let peek heap = node_func (fun v _ -> v) heap
-    let pop heap = node_func (fun _ l -> merge_in_pairs l) heap
-
+    let step heap = node_func (fun v l -> (v, merge_in_pairs l)) heap
     let of_list l = l |> List.map (fun v -> Node(v, [])) |> merge_in_pairs
   end
 
@@ -191,12 +182,7 @@ module BinomialHeapMake (Ord : OrderedType) =
     let of_list = List.fold_left (fun h x -> push x h) empty (* suboptimal *)
 
     let map f = List.map (MultiwayTree.map f)
-    let peek h =
-      let min_pair a b = if Ord.compare a b <= 0 then a else b in
-      let min_opt = function [] -> None | hd :: tl -> Some (List.fold_left min_pair hd tl) in  
-      h |> List.filter_map (node_func (fun v _ -> v)) |> min_opt
-
-    let pop h = Some h (* place holder !! *)
+    let step _ = assert false (* placeholder *)
   end
 
   

@@ -46,12 +46,9 @@ module type Queue = sig
   (** Apply a function to all priority queue elements and return the resulting priority queue. *)
   val map: (elt -> elt) -> t -> t
 
-  (** Get the top element as an option: [peek empty = None]. *)
-  val peek : t -> elt option
-    
-  (** Remove the top element if the queue is not empty: [pop empty = None]. *)
-  val pop : t -> t option
-
+  (** Coupled results of [peek] and [pop]. *)
+  val step : t -> (elt * t) option
+  
   (** Traversal in the order given by [Ord.compare]. Possibly inefficient. *)
   val to_ordered_seq : t -> elt Seq.t
 
@@ -60,6 +57,13 @@ module type Queue = sig
 
   (** Using a heap structure to sort a list. *)
   val sort : elt list -> elt list
+
+  (** Get the top element as an option: [peek empty = None]. *)
+  val peek : t -> elt option
+    
+  (** Remove the top element if the queue is not empty: [pop empty = None]. *)
+  val pop : t -> t option
+    
 end
 
 module LeftistTree (Ord : OrderedType) : Queue with type elt = Ord.t

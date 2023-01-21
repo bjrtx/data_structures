@@ -1,3 +1,5 @@
 (library
- (public_name data_structures)
- (name data_structures))
+ (name DataStructures)
+  (public_name DataStructures) 
+ (inline_tests)
+  (preprocess (pps ppx_inline_test)))

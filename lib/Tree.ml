@@ -1,26 +1,22 @@
 module Binary = struct
   type 'a t = Empty | Node of 'a * 'a t * 'a t
 
-  let node_func (f: 'a -> 'a t -> 'a t -> 'b) = function
+  let node_func f = function
     | Empty -> None
     | Node (v, l, r) -> Some (f v l r)
                       
   let leaf elt = Node (elt, Empty, Empty)
 
-  let push elt tree = Node(elt, tree, Empty)
-                    
   let empty = Empty
 
-  let is_empty tree= tree = Empty
+  let is_empty = function Empty -> true | _ -> false
                    
-  (*let%test "a leaf is not empty" = leaf 6 <> Empty*)
+  let%test "Leaves are not empty" = not (is_empty (leaf 6))
                    
   let rec fold (f: 'a -> 'b -> 'b -> 'b) (initial: 'b): 'a t -> 'b = function
     | Empty -> initial
     | Node (v, l, r) ->
-       let l = fold f initial l in
-       let r = fold f initial r in
-       f v l r
+       f v (fold f initial l) (fold f initial r)
 
   let rec map f = function
     | Empty -> Empty
@@ -30,9 +26,9 @@ module Binary = struct
   let size tree = fold (fun _ l r -> l + r + 1) 0 tree
   let breadth tree = fold (fun _ l r -> if l + r = 0 then 1 else 0) 0 tree
 
-  (*let%test _ = height Empty = -1
-let%test _= size Empty = 0
-let%test _= breadth Empty = 0 *)
+  let%test _ = height Empty = -1
+  let%test _= size Empty = 0
+  let%test _= breadth Empty = 0
                    
   let preorder t =
     let open Seq in
@@ -54,7 +50,7 @@ let%test _= breadth Empty = 0 *)
 
   let exists pred t = t |> fold (fun v l r -> (pred v) || l || r) false
 
-  (* let%test _ = not (exists (fun _ -> true) Empty) *)
+  let%test "No predicate is satisfiable on Empty" = not (exists (fun _ -> true) Empty)
                     
   let mem elt = exists ((=) elt)
 end
@@ -96,9 +92,9 @@ module Multiway = struct
   let size tree = fold (fun _ l -> 1 + List.fold_left (+) 0 l) 0 tree
 
 
-  (* let%test _ = height None = -1
-let%test _= size None = 0
-   *)
+  let%test _ = height None = -1
+  let%test _= size None = 0
+  
                 
   let preorder t =
     let f v l = Seq.cons v @@ Seq.concat @@ List.to_seq l in
