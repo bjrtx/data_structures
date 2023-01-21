@@ -102,7 +102,7 @@ module Multiway = struct
 
   let postorder t =
     let open Seq in
-    let f v l =append (Seq.concat @@ List.to_seq l) (return v) in
+    let f v l = append (Seq.concat @@ List.to_seq l) (return v) in
     fold f empty t
 
   let to_seq = preorder

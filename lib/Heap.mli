@@ -29,9 +29,6 @@ module type Queue = sig
   (** Linear-time traversal in arbitrary order. *)
   val to_arbitrary_seq : t -> elt Seq.t
 
-  (** Return [true] if the priority queue is empty else [false] *)
-  val is_empty : t -> bool
-
   (** Insert element. *)
   val push : elt -> t -> t
 
@@ -48,6 +45,9 @@ module type Queue = sig
 
   (** Coupled results of [peek] and [pop]. *)
   val step : t -> (elt * t) option
+
+  (** Get the top element as an option: [peek empty = None]. *)
+  val peek : t -> elt option
   
   (** Traversal in the order given by [Ord.compare]. Possibly inefficient. *)
   val to_ordered_seq : t -> elt Seq.t
@@ -57,12 +57,12 @@ module type Queue = sig
 
   (** Using a heap structure to sort a list. *)
   val sort : elt list -> elt list
-
-  (** Get the top element as an option: [peek empty = None]. *)
-  val peek : t -> elt option
-    
+  
   (** Remove the top element if the queue is not empty: [pop empty = None]. *)
   val pop : t -> t option
+
+  (** Return [true] if the priority queue is empty else [false] *)
+  val is_empty : t -> bool
     
 end
 
