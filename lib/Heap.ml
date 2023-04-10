@@ -7,7 +7,7 @@ module type OrderedType = sig
 end
 
                         
-module type Queue_Base = sig
+module type Base = sig
   type elt
   type t
   val size : t -> int
@@ -21,8 +21,8 @@ module type Queue_Base = sig
   val peek : t -> elt option
 end
 
-module type Queue = sig
-  include Queue_Base
+module type PriorityQueue = sig
+  include Base
   val to_ordered_seq : t -> elt Seq.t
   val mem : elt -> t -> bool
   val sort : elt list -> elt list
@@ -30,7 +30,7 @@ module type Queue = sig
   val is_empty : t -> bool
 end
 
-module AddOps(Q : Queue_Base) (*: Queue with type elt = Q.elt and type t = Q.t *) = struct
+module AddOps(Q : Base) (*: PriorityQueue with type elt = Q.elt and type t = Q.t *) = struct
   include Q
   let to_ordered_seq = Seq.unfold step 
   let pop t = Option.map snd @@ step t
@@ -64,17 +64,6 @@ module LeftistTreeMake(Ord: OrderedType) =
     let step = BinaryTree.node_func (fun (_, x) l r -> (x, merge l r))
     let peek t = BinaryTree.node_func (fun (_, x) _ _ -> x) t
     let to_arbitrary_seq tree = tree |> BinaryTree.to_arbitrary_seq |> Seq.map snd
-(*    let of_list l =
-      (* Inserting all elements one-by-one is inefficient. Instead, we do some kind of
-         merging in pairs. *)
-      let rec aux q =
-        let open Queue in
-        match (take_opt q, take_opt q) with
-        | None, None -> BinaryTree.Empty
-        | Some x, None | None, Some x -> x
-        | Some a, Some b -> (push (merge a b) q; aux q)
-      in
-      l |> List.to_seq |> Seq.map leaf |> Queue.of_seq |>  aux *)
     let rec merge_in_pairs = function
       | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)
       | [hd] -> hd
@@ -151,44 +140,72 @@ module PairingHeapMake(Ord: OrderedType) =
 module BinomialHeapMake (Ord : OrderedType) =
   struct
     type elt = Ord.t
-    type t = elt MultiwayTree.t list (* list of possibly empty trees *)
+    type t = (elt MultiwayTree.t) list (* list of possibly empty trees, which will be in decreasing order *)
+    type heap = t
     open MultiwayTree
-    let size h = h |> List.map MultiwayTree.size |> List.fold_left (+) 0  
-    let empty = []
-    let to_arbitrary_seq l =
-      l |> List.to_seq |> Seq.concat_map MultiwayTree.to_arbitrary_seq
+    let size h =
+      let zero_one = function None -> 0 | Some _ -> 1 in
+      h |> List.map zero_one |> List.fold_left (fun a b -> 2 * a + b) 0
+    let empty : heap = []
+    let to_arbitrary_seq h = h |> List.to_seq |> Seq.concat_map MultiwayTree.to_arbitrary_seq
     let leaf elt = [MultiwayTree.leaf elt]
-    (* let order = List.length*)
 
+    let order (Node(_, l)) = List.length l
+                          
     (* Merge two binomial trees of the same order k, returning a binomial tree of order k + 1. *)
     let merge_trees_of_same_order ((Node(va, la)) as ta) ((Node(vb, lb)) as tb) =
+      let () = assert (order ta = order tb) in
       if Ord.compare va vb <= 0 then
         Node(va, tb :: la)
       else
         Node(vb, ta :: lb)
       
 
-    let merge heapA heapB =
+    let merge (heapA : heap) (heapB : heap) =
+      (* add two lists of possibly empty trees. In each list the orders go up by one at each step *)
       let rec add (listA : elt MultiwayTree.t list) listB =
         match listA, listB with
         | [], l | l, [] -> l
         | hda :: tla, hdb :: tlb -> begin
             match hda, hdb with
             | x, None | None, x -> x :: add tla tlb 
-            | Some a, Some b ->
-               let carry = Some (merge_trees_of_same_order a b) in
-               None :: add (add tla [carry]) tlb
+            | Some a, Some b -> assert (order a = order b);
+               None :: add (add tla [Some (merge_trees_of_same_order a b)]) tlb
           end
       in
-      add (List.rev heapA) (List.rev heapB)
+      List.rev @@ add (List.rev heapA) (List.rev heapB)
 
     let push elt = merge (leaf elt)
 
     let of_list = List.fold_left (fun h x -> push x h) empty (* suboptimal *)
 
     let map f = List.map (MultiwayTree.map f)
-    let peek _ = assert false
-    let step _ = assert false (* placeholder *)
+
+    (* find the tree with the smallest root value *)
+    let min_of_node_list = function
+      | [] -> None
+      | hd :: tl -> Some (List.fold_left (fun ((Node(va, _)) as a) ((Node(vb, _)) as b) -> if Ord.compare va vb <= 0 then a else b) hd tl)
+
+    let make_heap node_list = (* insert empty trees at all empty orders *)
+      (* sort by decreasing order *)
+      let node_list = List.sort (fun (Node(_, la)) (Node(_, lb)) -> compare (List.length lb) (List.length la)) node_list in
+      let rec aux expected_order = function
+        | [] -> List.init (succ expected_order) (fun _ -> None)
+        | n :: tl -> if order n = expected_order
+                     then (Some n) :: aux (pred expected_order) tl
+                     else None :: aux (pred expected_order) (n :: tl)
+      in 
+      match node_list with [] -> [] | Node (_, l) :: _ -> aux (List.length l) node_list
+                  
+    (* smallest tree in h *)
+    let min_tree h = h |> List.filter Option.is_some |> List.map Option.get |> min_of_node_list 
+    let peek h = Option.map (fun (Node(v, _)) -> v) (min_tree h)
+    let step h = match min_tree h with
+      | None -> None (* empty heap *)
+      | Some (Node(v, l)) ->
+         let order = List.length l in
+         let other_nodes : heap = List.map (function Some (Node(_, l)) when List.length l = order -> None | x -> x) h in
+         Some (v, merge other_nodes (make_heap l))
   end
 
   

@@ -12,7 +12,7 @@ end
 
 
 (** Output signature of the various heap-building functors. *)
-module type Queue = sig
+module type PriorityQueue = sig
 
   
   (** The type of elements. *)
@@ -66,15 +66,15 @@ module type Queue = sig
     
 end
 
-module LeftistTree (Ord : OrderedType) : Queue with type elt = Ord.t
+module LeftistTree (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
 (** Leftist trees. *)
      
-module SkewHeap (Ord : OrderedType) : Queue with type elt = Ord.t
+module SkewHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
 (** Skew heaps. *)
      
-module PairingHeap (Ord : OrderedType) : Queue with type elt = Ord.t
+module PairingHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
                                                                  (** Pairing heaps. *)
 
 (** Binomial heaps. *)
-module BinomialHeap (Ord:OrderedType) : Queue with type elt = Ord.t
+module BinomialHeap (Ord:OrderedType) : PriorityQueue with type elt = Ord.t
 

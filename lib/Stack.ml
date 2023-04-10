@@ -1,5 +1,5 @@
-type +'a stack = 'a list * int
-
+type 'a t = 'a list * int
+          
 let empty = ([], 0)
 let to_list (l, _) = l
 let push x (l, n) = (x :: l, succ n)
