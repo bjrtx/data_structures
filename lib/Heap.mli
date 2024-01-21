@@ -71,9 +71,10 @@ module LeftistTree (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
      
 module SkewHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
 (** Skew heaps. *)
-     
+
+(** Pairing heaps. *)
 module PairingHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
-                                                                 (** Pairing heaps. *)
+                                                    
 
 (** Binomial heaps. *)
 module BinomialHeap (Ord:OrderedType) : PriorityQueue with type elt = Ord.t

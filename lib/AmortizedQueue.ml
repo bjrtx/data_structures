@@ -1,3 +1,6 @@
+(** Queue with amortized constant time insertion and removal. *)
+
+
 type 'a q = 'a list * 'a list
 
 let empty = ([], [])

@@ -119,7 +119,7 @@ module PairingHeapMake(Ord: OrderedType) =
     let map = MultiwayTree.map
            
     let merge_trees (Node (v1, l1)) (Node (v2, l2)) =
-      if v1 <= v2 then Node(v1, Node(v2, l2) :: l1) else Node(v2, Node(v1, l1) :: l2)
+      if Ord.compare v1 v2 <= 0 then Node(v1, Node(v2, l2) :: l1) else Node(v2, Node(v1, l1) :: l2)
       
     let merge a b = match (a, b) with
       | (None, x) | (x, None) -> x
@@ -131,10 +131,11 @@ module PairingHeapMake(Ord: OrderedType) =
       | a :: b :: tl -> merge (Some (merge_trees a b)) (merge_in_pairs tl)
       | [hd] -> Some hd
       | [] -> None
-            
+
+    let leaf v = Node(v, [])
     let step heap = node_func (fun v l -> (v, merge_in_pairs l)) heap
     let peek heap = node_func (fun v _ -> v) heap
-    let of_list l = l |> List.map (fun v -> Node(v, [])) |> merge_in_pairs
+    let of_list l = l |> List.map leaf |> merge_in_pairs
   end
 
 module BinomialHeapMake (Ord : OrderedType) =
@@ -177,7 +178,12 @@ module BinomialHeapMake (Ord : OrderedType) =
 
     let push elt = merge (leaf elt)
 
-    let of_list = List.fold_left (fun h x -> push x h) empty (* suboptimal *)
+    let rec merge_in_pairs = function
+      | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)
+      | [hd] -> hd
+      | [] -> empty
+            
+    let of_list l = l |> List.map leaf |> merge_in_pairs
 
     let map f = List.map (MultiwayTree.map f)
 
