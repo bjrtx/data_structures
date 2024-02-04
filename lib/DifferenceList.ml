@@ -17,4 +17,3 @@ let is_empty d = d [] = []
 let backspace = function _ :: l -> l | [] -> []
 let%test _ = to_list backspace = []
 let%test _ = to_list @@ append backspace (of_list [ 1; 2; 3 ]) = [ 2; 3 ]
-let%test _ = false

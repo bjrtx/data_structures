@@ -4,6 +4,8 @@ type 'a t
 (** The type of stacks with elements of type ['a]. *)
 
 val empty : 'a t
+(** The empty stack. *)
+  
 val to_list : 'a t -> 'a list
 val push : 'a -> 'a t -> 'a t
 

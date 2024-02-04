@@ -24,7 +24,7 @@ module DefaultBST (Ord : OrderedType) = struct
   type elt = Ord.t
   type t = Empty | Node of elt * t * t
 
-  let node_func f = function Empty -> None | Node (v, l, r) -> Some (f v l r)
+  (* let node_func f = function Empty -> None | Node (v, l, r) -> Some (f v l r) *)
   let leaf elt = Node (elt, Empty, Empty)
   let empty = Empty
   let is_empty = function Empty -> true | _ -> false
@@ -48,7 +48,7 @@ module DefaultBST (Ord : OrderedType) = struct
     let open Seq in
     let f v l r = cons v (append l r) in
     fold f empty t
-
+    (**
   let postorder t =
     let open Seq in
     let f v l r = append (append l r) (return v) in
@@ -58,7 +58,7 @@ module DefaultBST (Ord : OrderedType) = struct
     let open Seq in
     let f v l r = append l (cons v r) in
     fold f empty t
-
+     *)
   let to_seq = preorder
   let to_ordered_seq = to_seq
   let to_arbitrary_seq = preorder
@@ -81,7 +81,7 @@ module DefaultBST (Ord : OrderedType) = struct
 
   let of_list = List.fold_left (fun t x -> push x t) Empty
   let sort l = l |> of_list |> to_ordered_seq |> List.of_seq
-
+             (*
   let rec bounds x =
     let open Option in
     let or_else a b = some @@ value a ~default:b in
@@ -96,12 +96,13 @@ module DefaultBST (Ord : OrderedType) = struct
         else
           let a, b = bounds x r in
           (or_else a v, b)
+              *)
 end
 
 module RBTree (Ord : OrderedType) = struct
   type elt = Ord.t
-  type color = Red | Black
-
+  type color = Black (* todo Red *)
+    
   (* A node has color, height, value, and children *)
   type t = Empty | Node of color * int * elt * t * t
 
@@ -120,22 +121,23 @@ module RBTree (Ord : OrderedType) = struct
 
   let size tree = fold (fun _ l r -> l + r + 1) 0 tree
   let breadth tree = fold (fun _ l r -> if l + r = 0 then 1 else 0) 0 tree
-
+(*
   let rec min_opt = function
     | Empty -> None
     | Node (_, v, _, l, _) -> if is_empty l then Some v else min_opt l
-
+ *)
   let%test _ = height Empty = -1
   let%test _ = size Empty = 0
   let%test _ = breadth Empty = 0
-
+  (*
   let is_constant seq =
     let open Seq in
     let rec const_equal v s =
       match s () with Nil -> true | Cons (x, xs) -> x = v && const_equal v xs
     in
     match seq () with Nil -> true | Cons (x, xs) -> const_equal x xs
-
+   *)
+             (*
   let black_vals =
     let rec aux n = function
       | Empty -> Seq.return n
@@ -144,7 +146,8 @@ module RBTree (Ord : OrderedType) = struct
           Seq.append (aux n l) (aux n r)
     in
     aux 0
-
+              *)
+(*
   let reds_are_separate =
     let rec aux prev t =
       match (prev, t) with
@@ -155,16 +158,18 @@ module RBTree (Ord : OrderedType) = struct
     in
     (* unreachable *)
     aux Black
-
+ *)
+   (*
   let is_balanced t = (is_constant @@ black_vals t) && reds_are_separate t
-
+    *)
   (*todo : is_ordered *)
-
+                    
   let preorder t =
     let open Seq in
     let f v l r = cons v (append l r) in
     fold f empty t
 
+  (**
   let postorder t =
     let open Seq in
     let f v l r = append (append l r) (return v) in
@@ -174,7 +179,7 @@ module RBTree (Ord : OrderedType) = struct
     let open Seq in
     let f v l r = append l (cons v r) in
     fold f empty t
-
+   *)
   let to_seq = preorder
   let to_ordered_seq = to_seq
   let to_arbitrary_seq = preorder

@@ -1,6 +1,6 @@
 (** List implementation with constant-time concatenation. *)
 
-type 'a t
+type !'a t
 
 val of_list : 'a list -> 'a t
 val to_list : 'a t -> 'a list

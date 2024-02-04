@@ -1,4 +1,4 @@
-type 'a q
+type !+'a q
 
 val empty : 'a q
 val is_empty : 'a q -> bool
