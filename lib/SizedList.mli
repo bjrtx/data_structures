@@ -1,12 +1,13 @@
 (** Lists with constant-time size computation. *)
 
-
 type !+'a t
 
 val of_list : 'a list -> 'a t
 val to_list : 'a t -> 'a list
+
 val empty : 'a t
 (** The empty list. *)
+
 val append : 'a t -> 'a t -> 'a t
 val rev : 'a t -> 'a t
 val cons : 'a -> 'a t -> 'a t
