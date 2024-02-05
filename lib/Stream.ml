@@ -32,6 +32,7 @@ let reverse s =
   lazy (aux (s, Nil))
 
 let empty = lazy Nil
+let is_empty = function (lazy Nil) -> true | _ -> false
 
 let rec to_list = function
   | (lazy Nil) -> []
