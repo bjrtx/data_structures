@@ -66,3 +66,4 @@ module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
       assert false
 end
 module _ = BUMSTester (BottomUpMergeSort.Make (Int))
+module _ = BUMSTester(ScheduleBottomUpMergeSort.Make (Int))
