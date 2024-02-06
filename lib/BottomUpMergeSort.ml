@@ -13,7 +13,7 @@ module Make (Ord : OrderedType) = struct
       |xs, [] -> xs
       |(x::xs as first), (y::ys as snd) -> if less x y then x:: (merge xs snd) else y::(merge first ys)
 
-  let new_ = {size = 0; segments = lazy []}
+  let empty = {size = 0; segments = lazy []}
   let add x {size; segments} =
     let rec add_seg(seg, segs, size) =
       if size mod 2 = 0 then seg::segs else add_seg(merge seg (List.hd segs), List.tl segs, size / 2)
@@ -25,4 +25,12 @@ module Make (Ord : OrderedType) = struct
       | xs, seg::segs -> merge_all(merge xs seg, segs)
     in merge_all ([], Lazy.force segments)
      
+end
+
+module type Sortable = sig
+  type elt
+  type t
+  val empty: t
+  val add : elt -> t -> t
+  val sort : t -> elt list     
 end
