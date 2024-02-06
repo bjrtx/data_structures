@@ -45,6 +45,10 @@ let rec to_seq = function
 let rec map f = function
   | (lazy Nil) -> lazy Nil
   | (lazy (Cons (hd, tl))) -> lazy (Cons (f hd, map f tl))
+
+let peek = function
+  | (lazy Nil) -> None
+  | (lazy (Cons (hd, _))) -> Some hd
 (* val push : 'a -> 'a t -> 'a t
 
    val map : ('a -> 'b) -> 'a t -> 'b t

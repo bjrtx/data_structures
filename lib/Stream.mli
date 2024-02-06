@@ -13,6 +13,7 @@ val to_list : 'a t -> 'a list
 val to_seq : 'a t -> 'a Seq.t
 
 val map : ('a -> 'b) -> 'a t -> 'b t
+val peek : 'a t -> 'a option
 (** [to_seq (map f s) = Seq.map f (to_seq s)] *)
 
 (*
@@ -21,6 +22,5 @@ val push : 'a -> 'a t -> 'a t
 
 
 val pop : 'a t -> 'a t option
-val peek : 'a t -> 'a option
 
  *)
