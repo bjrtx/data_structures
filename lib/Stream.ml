@@ -1,5 +1,3 @@
-(** Lazy streams. *)
-
 type 'a cell = Nil | Cons of 'a * 'a t
 and 'a t = 'a cell Lazy.t
 
@@ -12,8 +10,7 @@ let rec append s t =
 let rec take n s =
   lazy
     (match (n, s) with
-    | 0, _ -> Nil
-    | _, (lazy Nil) -> Nil
+    | 0, _ | _, (lazy Nil) -> Nil
     | _, (lazy (Cons (hd, tl))) -> Cons (hd, take (pred n) tl))
 
 let drop n s =
@@ -46,15 +43,9 @@ let rec map f = function
   | (lazy Nil) -> lazy Nil
   | (lazy (Cons (hd, tl))) -> lazy (Cons (f hd, map f tl))
 
-let peek = function
-  | (lazy Nil) -> None
-  | (lazy (Cons (hd, _))) -> Some hd
+let peek = function (lazy Nil) -> None | (lazy (Cons (hd, _))) -> Some hd
+let cons x t = lazy (Cons (x, t))
+
 (* val push : 'a -> 'a t -> 'a t
 
-   val map : ('a -> 'b) -> 'a t -> 'b t
-   (** [to_seq (map f stack) = Seq.map f (to_seq stack)] *)
-
-   val pop : 'a t -> 'a t option
-   val peek : 'a t -> 'a option
-   val is_empty : 'a t -> bool
-*)
+   val pop : 'a t -> 'a t option *)

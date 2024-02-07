@@ -35,7 +35,6 @@ module _ = Tester (Heap.SkewHeap (Int))
 module _ = Tester (Heap.PairingHeap (Int))
 module _ = Tester (Heap.BinomialHeap (Int))
 
-
 module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
   let print_int_list l =
     List.iter
@@ -48,7 +47,10 @@ module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
   let () = Random.self_init ()
   let l : int list = List.init 50000 (fun _ -> Random.int 100000)
   let b = Sys.time ()
-  let qsort : int list = List.fold_left (fun acc x -> Q.add x acc) Q.empty l |> Q.sort
+
+  let qsort : int list =
+    List.fold_left (fun acc x -> Q.add x acc) Q.empty l |> Q.sort
+
   let first = Sys.time () -. b
   let () = Printf.printf "Sorting time: %fs\n" first
   let b = Sys.time ()
@@ -65,5 +67,6 @@ module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
       in
       assert false
 end
+
 module _ = BUMSTester (BottomUpMergeSort.Make (Int))
-module _ = BUMSTester(ScheduleBottomUpMergeSort.Make (Int))
+module _ = BUMSTester (ScheduleBottomUpMergeSort.Make (Int))

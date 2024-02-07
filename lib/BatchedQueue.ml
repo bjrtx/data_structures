@@ -11,10 +11,10 @@ let push x (l, r) = (SizedList.cons x l, r)
 let map f (l, r) = (SizedList.map f l, SizedList.map f r)
 
 let peek (l, r) =
+  let rec last = function [] -> None | _ :: l -> last l in
   match SizedList.(to_list l, to_list r) with
   | _, x :: _ -> Some x
-  | [], [] -> None
-  | l, [] -> Some (List.hd @@ List.rev l)
+  | l, [] -> last l
 
 let rec pop (l, r) =
   match SizedList.tail r with
