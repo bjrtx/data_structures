@@ -18,6 +18,3 @@ jobs:
           ocaml-compiler: "5.1"
           allow-prerelease-opam: true
           dune-cache: true
-
-      - name: Deploy odoc to GitHub Pages
-        uses: ocaml/setup-ocaml/deploy-doc@native-github-pages
