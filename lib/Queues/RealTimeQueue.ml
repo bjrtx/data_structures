@@ -20,6 +20,8 @@ let queue = function
 
 let push x q = queue { q with right = x :: q.right }
 
+let map f q = {left = Stream.map f q.left; right = List.map f q.right; suffix = Stream.map f q.suffix }
+
 let peek = function
   | { left = (lazy Nil); _ } -> None
   | { left = (lazy (Cons (hd, _))); _ } -> Some hd

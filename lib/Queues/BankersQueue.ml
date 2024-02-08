@@ -39,4 +39,6 @@ let pop = function
   | { left = (lazy (Cons (_, tl))); leftLength; _ } as q ->
       Some (queue { q with left = tl; leftLength = pred leftLength })
 
+let map f ({left; right; _} as q) = {q with left = Stream.map f left; right = Stream.map f right}
+
 let size { leftLength; rightLength; _ } = leftLength + rightLength

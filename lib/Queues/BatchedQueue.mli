@@ -1,7 +1,7 @@
 (** Batched queues.
     
 
-Section 3.1.1 in Chris Okasaki's PhD thesis. Amortized constant-time operations in ephemeral, not persistent use.*)
+Section 3.1.1 in Chris Okasaki's PhD thesis. Amortized constant-time push / peek / pop operations in ephemeral, not persistent use.*)
 
 include Queue.S
 

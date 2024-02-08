@@ -11,6 +11,8 @@ let empty =
 
 let is_empty { leftLength; _ } = leftLength = 0
 
+let map f q = {q with leftCopy = List.map f q.leftCopy; left = Lazy.map (List.map f) q.left; right = List.map f q.right}
+
 let checkCopy q =
   match q.leftCopy with [] -> { q with leftCopy = Lazy.force q.left } | _ -> q
 
