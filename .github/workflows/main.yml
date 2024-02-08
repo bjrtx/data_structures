@@ -1,0 +1,23 @@
+name: Ocaml action
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  testing:
+    name: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - name: Set-up OCaml 5.1
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: "5.1"
+          allow-prerelease-opam: true
+          dune-cache: true
+
+      - name: Deploy odoc to GitHub Pages
+        uses: ocaml/setup-ocaml/deploy-doc@native-github-pages
