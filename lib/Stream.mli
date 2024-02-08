@@ -4,7 +4,10 @@ type 'a cell = Nil | Cons of 'a * 'a t
 and 'a t = 'a cell Lazy.t
 
 val append : 'a t -> 'a t -> 'a t
-val (@): 'a t -> 'a t -> 'a t
+
+val ( @ ) : 'a t -> 'a t -> 'a t
+(** [s @ t] is [append s t].*)
+
 val take : int -> 'a t -> 'a t
 val drop : int -> 'a t -> 'a t
 val reverse : 'a t -> 'a t

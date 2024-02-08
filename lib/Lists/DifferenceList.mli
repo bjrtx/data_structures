@@ -1,4 +1,6 @@
-(** List implementation with constant-time concatenation. *)
+(** List implementation with constant-time concatenation. 
+    
+This is based on the 1985 paper by Hughes (who at the time did not yet use the name 'difference list').*)
 
 type !'a t
 
@@ -16,4 +18,9 @@ val mem : 'a -> 'a t -> bool
 val to_seq : 'a t -> 'a Seq.t
 val to_arbitrary_seq : 'a t -> 'a Seq.t
 val is_empty : 'a t -> bool
+
 val backspace : 'a t
+(** [append backspace (cons hd tl)] equals [tl].*)
+
+val copy : 'a t
+(** [append copy l] equals [l @ l].*)

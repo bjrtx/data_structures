@@ -2,7 +2,7 @@ type !'a t = 'a list -> 'a list
 
 let of_list = List.append
 let to_list (dl : 'a t) = dl []
-let empty (l : _ list) = l
+let empty = Fun.id
 let append (d1 : _ t) (d2 : _ t) l = d1 @@ d2 l
 let cons x (d : _ t) (l : _ list) = x :: d l
 let push = cons
@@ -17,3 +17,4 @@ let is_empty d = d [] = []
 let backspace = function _ :: l -> l | [] -> []
 let%test _ = to_list backspace = []
 let%test _ = to_list @@ append backspace (of_list [ 1; 2; 3 ]) = [ 2; 3 ]
+let copy l = l @ l

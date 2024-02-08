@@ -1,5 +1,7 @@
 (** Queue with amortized constant time insertion and removal. *)
 
+open Lists
+
 type 'a t = 'a SizedList.t * 'a SizedList.t
 
 let empty = SizedList.(empty, empty)

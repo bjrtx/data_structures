@@ -39,4 +39,4 @@ let pop = function
   | { left = (lazy (Cons (_, tl))); leftLength; _ } as q ->
       Some (queue { q with left = tl; leftLength = pred leftLength })
 
-let size {leftLength; rightLength; _} = leftLength + rightLength
+let size { leftLength; rightLength; _ } = leftLength + rightLength

@@ -7,7 +7,7 @@ let rec append s t =
     | (lazy Nil) -> Lazy.force t
     | (lazy (Cons (hd, tl))) -> Cons (hd, append tl t))
 
-let (@) = append
+let ( @ ) = append
 
 let rec take n s =
   lazy
