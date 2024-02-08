@@ -1,6 +1,6 @@
 (** Common interface for all queues (FIFO structures). *)
 
-module type Queue =  sig
+module type S =  sig
   type 'a t
   val empty: 'a t
   val is_empty : 'a t -> bool

@@ -3,7 +3,7 @@
 
 Section 3.1.1 in Chris Okasaki's PhD thesis. Amortized constant-time operations in ephemeral, not persistent use.*)
 
-include Queue.Queue
+include Queue.S
 
 val mem : 'a -> 'a t -> bool
 val size : 'a t -> int

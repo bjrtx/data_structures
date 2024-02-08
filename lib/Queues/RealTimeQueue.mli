@@ -8,4 +8,4 @@ of overheads associated with memoizing values that are never looked at again, bu
 known real-time implementation when used persistently.}
 *)
 
-include Queue.Queue
+include Queue.S
