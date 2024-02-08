@@ -1,6 +1,6 @@
 (** Queue with amortized constant time insertion and removal. *)
 
-type 'a q = 'a SizedList.t * 'a SizedList.t
+type 'a t = 'a SizedList.t * 'a SizedList.t
 
 let empty = SizedList.(empty, empty)
 let is_empty q = q = empty

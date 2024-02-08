@@ -9,7 +9,7 @@ type 'a t = {
 let empty =
   { leftCopy = []; left = lazy []; leftLength = 0; right = []; rightLength = 0 }
 
-let isEmpty { leftLength; _ } = leftLength = 0
+let is_empty { leftLength; _ } = leftLength = 0
 
 let checkCopy q =
   match q.leftCopy with [] -> { q with leftCopy = Lazy.force q.left } | _ -> q
@@ -28,14 +28,14 @@ let checkRight q =
 
 let queue q = checkCopy @@ checkRight q
 
-let snoc x q =
+let push x q =
   queue { q with right = x :: q.right; rightLength = succ q.rightLength }
 
-let head = function
+let peek = function
   | { leftCopy = []; _ } -> None
   | { leftCopy = hd :: _; _ } -> Some hd
 
-let tail q =
+let pop q =
   if q.leftCopy = [] then None
   else
     Some

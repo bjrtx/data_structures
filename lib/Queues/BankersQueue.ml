@@ -22,7 +22,7 @@ let queue ({ left; leftLength; right; rightLength } as q) =
       rightLength = 0;
     }
 
-let snoc x q =
+let push x q =
   queue
     {
       q with
@@ -30,11 +30,13 @@ let snoc x q =
       rightLength = succ q.rightLength;
     }
 
-let head = function
+let peek = function
   | { left = (lazy Nil); _ } -> None
   | { left = (lazy (Cons (hd, _))); _ } -> Some hd
 
-let tail = function
+let pop = function
   | { left = (lazy Nil); _ } -> None
   | { left = (lazy (Cons (_, tl))); leftLength; _ } as q ->
       Some (queue { q with left = tl; leftLength = pred leftLength })
+
+let size {leftLength; rightLength; _} = leftLength + rightLength

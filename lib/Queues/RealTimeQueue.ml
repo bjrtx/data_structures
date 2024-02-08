@@ -18,12 +18,12 @@ let queue = function
       let left = rotate left right Stream.empty in
       { left; right = []; suffix = left }
 
-let snoc x q = queue { q with right = x :: q.right }
+let push x q = queue { q with right = x :: q.right }
 
-let head = function
+let peek = function
   | { left = (lazy Nil); _ } -> None
   | { left = (lazy (Cons (hd, _))); _ } -> Some hd
 
-let tail = function
+let pop = function
   | { left = (lazy Nil); _ } -> None
   | { left = (lazy (Cons (_, tl))); _ } as q -> Some { q with left = tl }
