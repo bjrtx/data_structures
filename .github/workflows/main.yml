@@ -7,6 +7,8 @@ on:
 jobs:
   testing:
     name: testing
+    strategy:
+      fail-fast: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout tree
@@ -18,3 +20,5 @@ jobs:
           ocaml-compiler: "5.1"
           allow-prerelease-opam: true
           dune-cache: true
+
+      - run: opam exec -- dune build
