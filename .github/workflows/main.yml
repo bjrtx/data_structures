@@ -21,6 +21,8 @@ jobs:
           allow-prerelease-opam: true
           dune-cache: true
           
-      - run: opam install . --deps-only --with-test
+      - run: |
+          opam install ppx_inline_test
+          opam install . --deps-only --with-test
       
       - run: opam exec -- dune build
