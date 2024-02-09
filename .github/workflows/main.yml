@@ -20,5 +20,7 @@ jobs:
           ocaml-compiler: "5.1"
           allow-prerelease-opam: true
           dune-cache: true
-
+          
+      - run: opam install . --deps-only --with-test
+      
       - run: opam exec -- dune build
