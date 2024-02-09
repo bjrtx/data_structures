@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github bjrtx/data_structures))
 
-(authors "Author Name")
+(authors "bjrtx")
 
-(maintainers "Maintainer Name")
+(maintainers "bjrtx")
 
 (license LICENSE)
 
@@ -19,7 +19,7 @@
  (name DataStructures)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune ppx_inline_test)
  (tags
   (topics "to describe" your project)))
 
