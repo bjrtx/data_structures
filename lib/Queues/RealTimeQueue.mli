@@ -9,4 +9,5 @@ known real-time implementation when used persistently.}
 *)
 
 include Queue.S
-val map: ('a -> 'b) -> 'a t -> 'b t
+
+val map : ('a -> 'b) -> 'a t -> 'b t

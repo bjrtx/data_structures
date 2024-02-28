@@ -1,6 +1,6 @@
 (* Bottom-up merge-sort structure after Okasaki.
-   
-Amortized logarithmic insertion, amortized linear-time sorting. *)
+
+   Amortized logarithmic insertion, amortized linear-time sorting. *)
 
 module type OrderedType = sig
   type t

@@ -17,9 +17,17 @@ let pop = function
       Some (Q { q with f = tf; lenfm = pred lenfm })
   | _ -> None
 
-let rec map: 'a 'b. ('a -> 'b) -> 'a t -> 'b t = fun fn -> function
-    | Empty -> Empty
-    | Q ({f; m; r; _} as q) -> Q {q with f = List.map fn f; m = map (Lazy.map (List.map fn)) m; r = List.map fn r}
+let rec map : 'a 'b. ('a -> 'b) -> 'a t -> 'b t =
+ fun fn -> function
+  | Empty -> Empty
+  | Q ({ f; m; r; _ } as q) ->
+      Q
+        {
+          q with
+          f = List.map fn f;
+          m = map (Lazy.map (List.map fn)) m;
+          r = List.map fn r;
+        }
 
 let check_f = function
   | { f = []; m = Empty; _ } -> Empty

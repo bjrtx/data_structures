@@ -1,14 +1,14 @@
 include DataStructures
 
-module Tester (Q : Heap.PriorityQueue with type elt = int) = struct
-  let print_int_list l =
-    List.iter
-      (fun x ->
-        print_int x;
-        print_string " ")
-      l;
-    print_newline ()
+let print_int_list l =
+  List.iter
+    (fun x ->
+      print_int x;
+      print_string " ")
+    l;
+  print_newline ()
 
+module Tester (Q : Heap.PriorityQueue with type elt = int) = struct
   let () = Random.self_init ()
   let l : int list = List.init 50000 (fun _ -> Random.int 100000)
   let b = Sys.time ()
