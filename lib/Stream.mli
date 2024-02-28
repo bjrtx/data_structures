@@ -1,4 +1,7 @@
-(** Lazy streams. *)
+(** Lazy streams. 
+    
+
+A stream is the suspension of either an empty cell, or of the product of a value and a stream.*)
 
 type 'a cell = Nil | Cons of 'a * 'a t
 and 'a t = 'a cell Lazy.t
