@@ -11,7 +11,7 @@ val append : 'a t -> 'a t -> 'a t
 val cons : 'a -> 'a t -> 'a t
 val push : 'a -> 'a t -> 'a t
 val map : ('a -> 'b) -> 'a t -> 'b t
-val snoc : 'a t -> 'a -> 'a t
+val snoc : 'a -> 'a t -> 'a t
 val concat : 'a t list -> 'a t
 val size : 'a t -> int
 val mem : 'a -> 'a t -> bool
