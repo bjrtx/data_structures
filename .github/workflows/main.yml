@@ -1,28 +1,40 @@
-name: Ocaml action
+name: Builds, tests & co
 
 on:
-  - push
-  - workflow_dispatch
+  workflow_dispatch:
+  pull_request:
+  push:
+  schedule:
+    # Prime the caches every Monday
+    - cron: 0 1 * * MON
+
+permissions: read-all
 
 jobs:
-  testing:
-    name: testing
+  build:
     strategy:
-      fail-fast: true
-    runs-on: ubuntu-latest
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+        ocaml-compiler:
+          - "5.1"
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout tree
         uses: actions/checkout@v4
 
-      - name: Set-up OCaml 5.1
+      - name: Set-up OCaml ${{ matrix.ocaml-compiler }}
         uses: ocaml/setup-ocaml@v2
         with:
-          ocaml-compiler: "5.1"
-          allow-prerelease-opam: true
-          dune-cache: true
-          
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+
       - run: opam install . --deps-only --with-test
-      
+
       - run: opam exec -- dune build
 
       - run: opam exec -- dune runtest
