@@ -16,9 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
           - ubuntu-latest
-          - windows-latest
         ocaml-compiler:
           - "5.1"
 
@@ -38,3 +36,18 @@ jobs:
       - run: opam exec -- dune build
 
       - run: opam exec -- dune runtest
+      
+      - name: Build documentation
+        run: opam exec -- dune build @doc
+
+      - name: Set-up Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: _build/default/_doc/_html
+
+      - name: Deploy odoc to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
