@@ -18,7 +18,7 @@ module type QS = sig
   val pop : 'a t -> 'a t option
 end
 
-module Make : QS -> sig
+module Make : functor (_ : QS) -> sig
   type 'a t
 
   val empty : 'a t

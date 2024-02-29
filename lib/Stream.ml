@@ -1,11 +1,19 @@
 type 'a cell = Nil | Cons of 'a * 'a t
 and 'a t = 'a cell Lazy.t
 
+let empty = lazy Nil
+let is_empty = function (lazy Nil) -> true | _ -> false
+let cons x t = lazy (Cons (x, t))
+
 let rec append s t =
   lazy
     (match s with
     | (lazy Nil) -> Lazy.force t
     | (lazy (Cons (hd, tl))) -> Cons (hd, append tl t))
+
+let rec fold_left f acc = function
+  | (lazy Nil) -> acc
+  | (lazy (Cons (hd, tl))) -> fold_left f (f acc hd) tl
 
 let ( @ ) = append
 
@@ -23,15 +31,7 @@ let drop n s =
   in
   lazy (aux (n, s))
 
-let reverse s =
-  let rec aux = function
-    | (lazy Nil), r -> r
-    | (lazy (Cons (hd, tl))), r -> aux (tl, Cons (hd, lazy r))
-  in
-  lazy (aux (s, Nil))
-
-let empty = lazy Nil
-let is_empty = function (lazy Nil) -> true | _ -> false
+let reverse s = fold_left (Fun.flip cons) empty s
 
 let rec to_list = function
   | (lazy Nil) -> []
@@ -43,11 +43,6 @@ let rec to_seq = function
 
 let rec map f = function
   | (lazy Nil) -> lazy Nil
-  | (lazy (Cons (hd, tl))) -> lazy (Cons (f hd, map f tl))
+  | (lazy (Cons (hd, tl))) -> cons (f hd) (map f tl)
 
 let peek = function (lazy Nil) -> None | (lazy (Cons (hd, _))) -> Some hd
-let cons x t = lazy (Cons (x, t))
-
-(* val push : 'a -> 'a t -> 'a t
-
-   val pop : 'a t -> 'a t option *)

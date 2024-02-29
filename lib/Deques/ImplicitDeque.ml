@@ -26,13 +26,13 @@ module Make (Q : QS) = struct
     | Zero -> One x
     | One y -> Two (x, y)
     | Two (y, z) -> Three (x, y, z)
-    | _ -> failwith ""
+    | _ -> failwith "Should not cons to Three _"
 
   let dsnoc x = function
     | Zero -> One x
     | One y -> Two (y, x)
     | Two (y, z) -> Three (y, z, x)
-    | _ -> failwith ""
+    | _ -> failwith "Should not snoc to Three _"
 
   let dhead = function
     | Zero -> None
@@ -66,12 +66,12 @@ module Make (Q : QS) = struct
 
   let tail = function
     | Shallow d -> Some (Shallow (Option.get @@ dtail d))
-    | Deep { f = One _; m = (lazy ps); r } -> (
-        match Q.peek ps with
-        | None -> Some (Shallow r)
-        | Some (b, c) ->
-            Some (Deep { f = Two (b, c); m = lazy (Option.get @@ Q.pop ps); r })
-        )
+    | Deep { f = One _; m = (lazy ps); r } ->
+        Some
+          (match Q.peek ps with
+          | None -> Shallow r
+          | Some (b, c) ->
+              Deep { f = Two (b, c); m = lazy (Option.get @@ Q.pop ps); r })
     | Deep deep -> Some (Deep { deep with f = Option.get @@ dtail deep.f })
 
   let snoc x = function
@@ -86,12 +86,11 @@ module Make (Q : QS) = struct
 
   let init = function
     | Shallow d -> Some (Shallow (Option.get @@ dinit d))
-    | Deep { r = One _; m = (lazy ps); f } -> (
-        match Q.last ps with
-        | None -> Some (Shallow f)
-        | Some (b, c) ->
-            Some
-              (Deep { r = Two (b, c); m = lazy (Option.get @@ Q.poplast ps); f })
-        )
+    | Deep { r = One _; m = (lazy ps); f } ->
+        Some
+          (match Q.last ps with
+          | None -> Shallow f
+          | Some (b, c) ->
+              Deep { r = Two (b, c); m = lazy (Option.get @@ Q.poplast ps); f })
     | Deep deep -> Some (Deep { deep with r = Option.get @@ dinit deep.r })
 end

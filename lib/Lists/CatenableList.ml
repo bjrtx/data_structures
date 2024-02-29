@@ -3,13 +3,8 @@ module type S = sig
 
   val empty : 'a t
   val is_empty : 'a t -> bool
-
   val push : 'a -> 'a t -> 'a t
-  (** [push x q] is obtained by the insertion of [x] into [q]. *)
-
   val peek : 'a t -> 'a option
-  (** [peep x q] is either [None] if [q] is empty or [Some x] where [x] is the first-out element of [q]. *)
-
   val pop : 'a t -> 'a t option
 end
 
@@ -23,18 +18,13 @@ module CatenableList (Q : S) = struct
   let link cat s =
     match cat with Empty -> Lazy.force s | Cons (x, q) -> Cons (x, Q.push s q)
 
-  let rec link_all (q : 'a t Lazy.t Q.t) : 'a t =
+  let rec link_all q : 'a t =
     let t =
       q |> Q.peek |> Option.map Lazy.force |> Option.value ~default:Empty
     in
     match Q.pop q with Some qq -> link t (lazy (link_all qq)) | _ -> t
 
-  let append xs ys =
-    match (xs, ys) with
-    | Empty, _ -> ys
-    | _, Empty -> xs
-    | _ -> link xs (lazy ys)
-
+  let append xs ys = link xs (lazy ys)
   let ( @ ) xs ys = append xs ys
   let peek = function Empty -> None | Cons (x, _) -> Some x
   let pop = function Empty -> None | Cons (_, q) -> Some (link_all q)
