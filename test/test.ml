@@ -8,9 +8,9 @@ let print_int_list l =
     l;
   print_newline ()
 
-module Tester (Q : Heap.PriorityQueue with type elt = int) = struct
+module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
   let () = Random.self_init ()
-  let l : int list = List.init 50000 (fun _ -> Random.int 230)
+  let l : int list = List.init 100000 (fun _ -> Random.int 1073741823)
   let b = Sys.time ()
   let qsort : int list = Q.sort l
   let first = Sys.time () -. b
@@ -30,10 +30,10 @@ module Tester (Q : Heap.PriorityQueue with type elt = int) = struct
       assert false
 end
 
-module _ = Tester (Heap.LeftistTree (Int))
-module _ = Tester (Heap.SkewHeap (Int))
-module _ = Tester (Heap.PairingHeap (Int))
-module _ = Tester (Heap.BinomialHeap (Int))
+module _ = Tester (Heaps.LeftistTree.Make (Int))
+module _ = Tester (Heaps.Heap.SkewHeap (Int))
+module _ = Tester (Heaps.Heap.PairingHeap (Int))
+module _ = Tester (Heaps.Heap.BinomialHeap (Int))
 
 module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
   let () = Random.self_init ()

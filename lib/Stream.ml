@@ -5,11 +5,11 @@ let empty = lazy Nil
 let is_empty = function (lazy Nil) -> true | _ -> false
 let cons x t = lazy (Cons (x, t))
 
-let rec append s t =
+let rec append (lazy s) t =
   lazy
     (match s with
-    | (lazy Nil) -> Lazy.force t
-    | (lazy (Cons (hd, tl))) -> Cons (hd, append tl t))
+    | Nil -> Lazy.force t
+    | Cons (hd, tl) -> Cons (hd, append tl t))
 
 let rec fold_left f acc = function
   | (lazy Nil) -> acc
@@ -17,11 +17,11 @@ let rec fold_left f acc = function
 
 let ( @ ) = append
 
-let rec take n s =
+let rec take n (lazy s) =
   lazy
     (match (n, s) with
-    | 0, _ | _, (lazy Nil) -> Nil
-    | _, (lazy (Cons (hd, tl))) -> Cons (hd, take (pred n) tl))
+    | 0, _ | _, Nil -> Nil
+    | _, Cons (hd, tl) -> Cons (hd, take (pred n) tl))
 
 let drop n s =
   let rec aux = function
@@ -33,16 +33,15 @@ let drop n s =
 
 let reverse s = fold_left (Fun.flip cons) empty s
 
-let rec to_list = function
-  | (lazy Nil) -> []
-  | (lazy (Cons (hd, tl))) -> hd :: to_list tl
+let rec to_list (lazy s) =
+  match s with Nil -> [] | Cons (hd, tl) -> hd :: to_list tl
 
-let rec to_seq = function
-  | (lazy Nil) -> Seq.empty
-  | (lazy (Cons (hd, tl))) -> fun () -> Seq.Cons (hd, to_seq tl)
+let rec to_seq (lazy s) =
+  match s with
+  | Nil -> Seq.empty
+  | Cons (hd, tl) -> fun () -> Seq.Cons (hd, to_seq tl)
 
-let rec map f = function
-  | (lazy Nil) -> lazy Nil
-  | (lazy (Cons (hd, tl))) -> cons (f hd) (map f tl)
+let rec map f (lazy s) =
+  match s with Nil -> lazy Nil | Cons (hd, tl) -> cons (f hd) (map f tl)
 
-let peek = function (lazy Nil) -> None | (lazy (Cons (hd, _))) -> Some hd
+let peek (lazy s) = match s with Nil -> None | Cons (hd, _) -> Some hd

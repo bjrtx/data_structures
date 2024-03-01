@@ -45,43 +45,6 @@ struct
   let is_empty t = Option.is_none @@ peek t
 end
 
-module LeftistTreeMake (Ord : OrderedType) = struct
-  type elt = Ord.t
-  type t = (int * elt) BinaryTree.t (* the first parameter is the svalue *)
-
-  open BinaryTree
-
-  let empty = BinaryTree.Empty
-  let map f = BinaryTree.map (fun (svalue, x) -> (svalue, f x))
-  let size = BinaryTree.size
-  let svalue = function Empty -> -1 | Node ((s, _), _, _) -> s
-
-  let rec merge a b =
-    match (a, b) with
-    | Empty, x | x, Empty -> x
-    | Node ((_, va), _, _), Node ((_, vb), _, _) when Ord.compare va vb > 0 ->
-        merge b a
-    | Node ((_, x), l, r), b ->
-        let r = merge r b in
-        (* of l and r, the subtree with the larger s-value goes to the left *)
-        let l, r = if svalue l >= svalue r then (l, r) else (r, l) in
-        Node ((1 + min (svalue l) (svalue r), x), l, r)
-
-  let leaf elt = BinaryTree.leaf (0, elt)
-  let push elt = merge (leaf elt)
-  let step = BinaryTree.node_func (fun (_, x) l r -> (x, merge l r))
-  let peek t = BinaryTree.node_func (fun (_, x) _ _ -> x) t
-  let to_arbitrary_seq tree = tree |> BinaryTree.to_arbitrary_seq |> Seq.map snd
-
-  let rec merge_in_pairs = function
-    | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)
-    | [ hd ] -> hd
-    | [] -> Empty
-
-  let of_list l = l |> List.map leaf |> merge_in_pairs
-
-  (* Todo: Leftist invariant *)
-end
 
 module SkewHeapMake (Ord : OrderedType) = struct
   open BinaryTree
@@ -159,8 +122,9 @@ module BinomialHeapMake (Ord : OrderedType) = struct
   open MultiwayTree
 
   let size h =
-    let zero_one = function None -> 0 | Some _ -> 1 in
-    h |> List.map zero_one |> List.fold_left (fun a b -> (2 * a) + b) 0
+    h
+    |> List.map (function None -> 0 | Some _ -> 1)
+    |> List.fold_left (fun a b -> (2 * a) + b) 0
 
   let empty : heap = []
 
@@ -250,7 +214,6 @@ module BinomialHeapMake (Ord : OrderedType) = struct
         Some (v, merge other_nodes (make_heap l))
 end
 
-module LeftistTree (Ord : OrderedType) = AddOps (LeftistTreeMake (Ord))
 module SkewHeap (Ord : OrderedType) = AddOps (SkewHeapMake (Ord))
 module PairingHeap (Ord : OrderedType) = AddOps (PairingHeapMake (Ord))
 module BinomialHeap (Ord : OrderedType) = AddOps (BinomialHeapMake (Ord))

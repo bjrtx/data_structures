@@ -60,8 +60,22 @@ module type PriorityQueue = sig
   (** Return [true] if the priority queue is empty else [false] *)
 end
 
-(** Leftist trees. *)
-module LeftistTree (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
+module type Base = sig
+  type elt
+  type t
+
+  val size : t -> int
+  val empty : t
+  val to_arbitrary_seq : t -> elt Seq.t
+  val push : elt -> t -> t
+  val merge : t -> t -> t
+  val of_list : elt list -> t
+  val map : (elt -> elt) -> t -> t
+  val step : t -> (elt * t) option
+  val peek : t -> elt option
+end
+
+module AddOps (B : Base) : PriorityQueue with type elt = B.elt
 
 (** Skew heaps. *)
 module SkewHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
