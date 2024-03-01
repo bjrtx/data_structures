@@ -31,9 +31,9 @@ module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
 end
 
 module _ = Tester (Heaps.LeftistTree.Make (Int))
-module _ = Tester (Heaps.Heap.SkewHeap (Int))
-module _ = Tester (Heaps.Heap.PairingHeap (Int))
-module _ = Tester (Heaps.Heap.BinomialHeap (Int))
+module _ = Tester (Heaps.SkewHeap.Make (Int))
+module _ = Tester (Heaps.PairingHeap.Make (Int))
+module _ = Tester (Heaps.BinomialHeap.Make (Int))
 
 module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
   let () = Random.self_init ()

@@ -1,2 +1,2 @@
-module Make : Heap.OrderedType -> Heap.PriorityQueue
+module Make (Ord: Heap.OrderedType) : Heap.PriorityQueue with type elt = Ord.t
   

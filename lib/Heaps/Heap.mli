@@ -77,11 +77,3 @@ end
 
 module AddOps (B : Base) : PriorityQueue with type elt = B.elt
 
-(** Skew heaps. *)
-module SkewHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
-
-(** Pairing heaps. *)
-module PairingHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
-
-(** Binomial heaps. *)
-module BinomialHeap (Ord : OrderedType) : PriorityQueue with type elt = Ord.t
