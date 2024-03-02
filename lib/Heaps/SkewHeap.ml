@@ -1,7 +1,6 @@
 module MakeBase (Ord : Heap.OrderedType) = struct
   open Tree.Binary
 
-
   type elt = Ord.t
   type t = elt Tree.Binary.t
 

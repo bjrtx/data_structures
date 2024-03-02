@@ -44,4 +44,3 @@ struct
   let sort l = l |> of_list |> to_ordered_seq |> List.of_seq
   let is_empty t = Option.is_none @@ peek t
 end
-

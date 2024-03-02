@@ -24,7 +24,9 @@ module MakeBase (Ord : Heap.OrderedType) = struct
   let push elt = merge (leaf elt)
   let step = Tree.Binary.node_func (fun (_, x) l r -> (x, merge l r))
   let peek t = Tree.Binary.node_func (fun (_, x) _ _ -> x) t
-  let to_arbitrary_seq tree = tree |> Tree.Binary.to_arbitrary_seq |> Seq.map snd
+
+  let to_arbitrary_seq tree =
+    tree |> Tree.Binary.to_arbitrary_seq |> Seq.map snd
 
   let rec merge_in_pairs = function
     | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)

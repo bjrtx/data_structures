@@ -76,4 +76,3 @@ module type Base = sig
 end
 
 module AddOps (B : Base) : PriorityQueue with type elt = B.elt
-
