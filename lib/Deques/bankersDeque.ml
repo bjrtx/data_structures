@@ -11,7 +11,7 @@ struct
   let empty = { f = empty; r = empty }
   let is_empty { f; r } = is_empty f && is_empty r
 
-  let queue { f; r } =
+  let queue ({ f; r } as q) =
     let lenf = size f and lenr = size r in
     if lenf > (c * lenr) + 1 then
       let i = (lenf + lenr) / 2 in
@@ -20,7 +20,7 @@ struct
       let i = (lenf + lenr) / 2 in
       let lenr = lenf + lenr - i in
       { f = f @ reverse (drop lenr r); r = take lenr r }
-    else { f; r }
+    else q
 
   let cons x { f; r } = { f = cons x f; r } |> queue
   let head { f; r } = match peek f with None -> peek r | hd -> hd
