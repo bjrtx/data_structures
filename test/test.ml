@@ -30,9 +30,20 @@ module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
       assert false
 end
 
+let () = print_endline "Testing lefist trees"
+
 module _ = Tester (Heaps.LeftistTree.Make (Int))
+
+let () = print_endline "Testing skew heaps"
+
 module _ = Tester (Heaps.SkewHeap.Make (Int))
+
+let () = print_endline "Testing pairing heaps"
+
 module _ = Tester (Heaps.PairingHeap.Make (Int))
+
+let () = print_endline "Testing binomial heaps"
+
 module _ = Tester (Heaps.BinomialHeap.Make (Int))
 
 module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
@@ -57,5 +68,10 @@ module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
       assert false
 end
 
+let () = print_endline "Testing bottom-up merge-sort collections."
+
 module _ = BUMSTester (BottomUpMergeSort.Make (Int))
+
+let () = print_endline "Testing scheduled bottom-up merge-sort collections."
+
 module _ = BUMSTester (ScheduleBottomUpMergeSort.Make (Int))

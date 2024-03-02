@@ -9,7 +9,7 @@ module MakeBase (Ord : Heap.OrderedType) = struct
 
   let size h =
     h
-    |> List.map (function None -> 0 | Some _ -> 1)
+    |> List.map (fun o -> Bool.to_int @@ Option.is_some o)
     |> List.fold_left (fun a b -> (2 * a) + b) 0
 
   let empty : heap = []
@@ -81,15 +81,12 @@ module MakeBase (Ord : Heap.OrderedType) = struct
     | Node (_, l) :: _ -> aux (List.length l) node_list
 
   (* smallest tree in h *)
-  let min_tree h =
-    h |> List.filter Option.is_some |> List.map Option.get |> min_of_node_list
-
+  let min_tree h = h |> List.filter_map Fun.id |> min_of_node_list
   let peek h = Option.map (fun (Node (v, _)) -> v) (min_tree h)
 
   let step h =
-    match min_tree h with
-    | None -> None (* empty heap *)
-    | Some (Node (v, l)) ->
+    Option.map
+      (fun (Node (v, l)) ->
         let order = List.length l in
         let other_nodes : heap =
           List.map
@@ -97,7 +94,8 @@ module MakeBase (Ord : Heap.OrderedType) = struct
               | Some (Node (_, l)) when List.length l = order -> None | x -> x)
             h
         in
-        Some (v, merge other_nodes (make_heap l))
+        (v, merge other_nodes (make_heap l)))
+      (min_tree h)
 end
 
 module Make (Ord : Heap.OrderedType) = Heap.AddOps (MakeBase (Ord))

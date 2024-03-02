@@ -1,32 +1,34 @@
 module MakeBase (Ord : Heap.OrderedType) = struct
   type elt = Ord.t
-  type t = (int * elt) Tree.Binary.t (* the first parameter is the svalue *)
+  type node = { value : elt; s : int }
+  type t = node Tree.Binary.t
 
   open Tree.Binary
 
   let empty = Tree.Binary.Empty
-  let map f = Tree.Binary.map (fun (svalue, x) -> (svalue, f x))
+  let map f = Tree.Binary.map (fun { value; s } -> { value = f value; s })
   let size = Tree.Binary.size
-  let svalue = function Empty -> -1 | Node ((s, _), _, _) -> s
+  let svalue = function Empty -> -1 | Node ({ s; _ }, _, _) -> s
 
   let rec merge a b =
     match (a, b) with
     | Empty, x | x, Empty -> x
-    | Node ((_, va), _, _), Node ((_, vb), _, _) when Ord.compare va vb > 0 ->
+    | Node ({ value = va; _ }, _, _), Node ({ value = vb; _ }, _, _)
+      when Ord.compare va vb > 0 ->
         merge b a
-    | Node ((_, x), l, r), b ->
+    | Node ({ value; _ }, l, r), b ->
         let r = merge r b in
         (* of l and r, the subtree with the larger s-value goes to the left *)
         let l, r = if svalue l >= svalue r then (l, r) else (r, l) in
-        Node ((1 + min (svalue l) (svalue r), x), l, r)
+        Node ({ s = 1 + min (svalue l) (svalue r); value }, l, r)
 
-  let leaf elt = Tree.Binary.leaf (0, elt)
+  let leaf elt = Tree.Binary.leaf { value = elt; s = 0 }
   let push elt = merge (leaf elt)
-  let step = Tree.Binary.node_func (fun (_, x) l r -> (x, merge l r))
-  let peek t = Tree.Binary.node_func (fun (_, x) _ _ -> x) t
+  let step = Tree.Binary.node_func (fun { value; _ } l r -> (value, merge l r))
+  let peek t = Tree.Binary.node_func (fun { value; _ } _ _ -> value) t
 
   let to_arbitrary_seq tree =
-    tree |> Tree.Binary.to_arbitrary_seq |> Seq.map snd
+    tree |> Tree.Binary.to_arbitrary_seq |> Seq.map (fun n -> n.value)
 
   let rec merge_in_pairs = function
     | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)
