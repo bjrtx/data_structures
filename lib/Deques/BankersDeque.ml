@@ -40,4 +40,16 @@ struct
     match Stream.tail f with
     | None -> if Stream.is_empty r then None else Some empty
     | Some tl -> Some { q with f = tl; lenf = pred lenf }
+
+  let snoc x ({ r; lenr; _ } as q) =
+    { q with r = Stream.cons x r; lenr = succ lenr } |> queue
+
+  let last = function
+    | { r = (lazy Nil); f; _ } -> Stream.peek f
+    | { r; _ } -> Stream.peek r
+
+  let init ({ f; r; lenr; _ } as q) =
+    match Stream.tail r with
+    | None -> if Stream.is_empty f then None else Some empty
+    | Some tl -> Some { q with r = tl; lenr = pred lenr }
 end
