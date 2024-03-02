@@ -17,8 +17,7 @@ module Make (Ord : OrderedType) = struct
       | (lazy Nil), ys -> ys
       | xs, (lazy Nil) -> xs
       | ((lazy (Cons (x, xs))) as first), ((lazy (Cons (y, ys))) as snd) ->
-          if less x y then lazy (Cons (x, merge xs snd))
-          else lazy (Cons (y, merge first ys)))
+          if less x y then cons x (merge xs snd) else cons y (merge first ys))
 
   let rec exec1 =
     Stream.(
@@ -27,10 +26,7 @@ module Make (Ord : OrderedType) = struct
       | (lazy Nil) :: tl -> exec1 tl
       | (lazy (Cons (_, xs))) :: tl -> xs :: tl)
 
-  let rec exec2_per_seg = function
-    | [] -> []
-    | (xs, sched) :: segs -> (xs, exec1 (exec1 sched)) :: exec2_per_seg segs
-
+  let exec2_per_seg = List.map (fun (xs, sched) -> (xs, exec1 (exec1 sched)))
   let empty = { size = 0; segments = [] }
 
   let add x { size; segments } =
@@ -49,11 +45,8 @@ module Make (Ord : OrderedType) = struct
     }
 
   let sort { segments; _ } =
-    let rec merge_all = function
-      | xs, [] -> xs
-      | xs, (xs', _) :: segs -> merge_all (merge xs xs', segs)
-    in
-    merge_all (lazy Nil, segments) |> Stream.to_list
+    List.fold_left (fun acc (x, _) -> merge acc x) Stream.empty segments
+    |> Stream.to_list
 end
 
 module type Sortable = sig
