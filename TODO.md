@@ -1,8 +1,6 @@
 # To implement
 
 ## From Okasaki
-
-- Banker's deques (p56)
 - Real-time deques(p59)
 - Simple catenable deques (p119)
 - Catenable deques (p122)
