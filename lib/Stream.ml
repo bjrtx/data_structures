@@ -42,3 +42,4 @@ let rec map f (lazy s) =
   match s with Nil -> lazy Nil | Cons (hd, tl) -> cons (f hd) (map f tl)
 
 let peek (lazy s) = match s with Nil -> None | Cons (hd, _) -> Some hd
+let tail (lazy s) = match s with Nil -> None | Cons (_, tl) -> Some tl

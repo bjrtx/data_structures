@@ -24,6 +24,7 @@ val map : ('a -> 'b) -> 'a t -> 'b t
 
 val peek : 'a t -> 'a option
 val cons : 'a -> 'a t -> 'a t
+val tail : 'a t -> 'a t option
 (*
 
 val push : 'a -> 'a t -> 'a t
