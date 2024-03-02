@@ -13,7 +13,7 @@
 
 (license LICENSE)
 
-(documentation https://url/to/documentation)
+(documentation https://bjrtx.github.io/data_structures)
 
 (package
  (name DataStructures)

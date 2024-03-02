@@ -6,10 +6,7 @@ let is_empty = function (lazy Nil) -> true | _ -> false
 let cons x t = lazy (Cons (x, t))
 
 let rec append (lazy s) t =
-  lazy
-    (match s with
-    | Nil -> Lazy.force t
-    | Cons (hd, tl) -> Cons (hd, append tl t))
+  match s with Nil -> t | Cons (hd, tl) -> cons hd (append tl t)
 
 let rec fold_left f acc = function
   | (lazy Nil) -> acc

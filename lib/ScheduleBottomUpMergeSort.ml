@@ -41,7 +41,7 @@ module Make (Ord : OrderedType) = struct
     {
       size = succ size;
       segments =
-        exec2_per_seg (add_seg (lazy (Cons (x, lazy Nil)), segments, size, []));
+        exec2_per_seg (add_seg (Stream.cons x (lazy Nil), segments, size, []));
     }
 
   let sort { segments; _ } =

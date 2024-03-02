@@ -57,7 +57,7 @@ module type PriorityQueue = sig
   (** Remove the top element if the queue is not empty: [pop empty = None]. *)
 
   val is_empty : t -> bool
-  (** Return [true] if the priority queue is empty else [false] *)
+  (** Return [true] if the priority queue is empty else [false]. *)
 end
 
 module type Base = sig

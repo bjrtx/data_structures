@@ -5,6 +5,7 @@ module Binary = struct
   let leaf elt = Node (elt, Empty, Empty)
   let empty = Empty
   let is_empty = function Empty -> true | _ -> false
+  let%test _ = is_empty Empty
   let%test "Leaves are not empty" = not (is_empty (leaf 6))
 
   let rec fold (f : 'a -> 'b -> 'b -> 'b) (initial : 'b) : 'a t -> 'b = function
@@ -17,7 +18,7 @@ module Binary = struct
 
   let height tree = fold (fun _ l r -> max l r) (-1) tree
   let size tree = fold (fun _ l r -> l + r + 1) 0 tree
-  let breadth tree = fold (fun _ l r -> if l + r = 0 then 1 else 0) 0 tree
+  let breadth tree = fold (fun _ l r -> if l + r = 0 then 1 else l + r) 0 tree
   let%test _ = height Empty = -1
   let%test _ = size Empty = 0
   let%test _ = breadth Empty = 0
@@ -44,6 +45,7 @@ module Binary = struct
   let%test "No predicate is satisfiable on Empty" =
     not (exists (fun _ -> true) Empty)
 
+  let%test _ = exists (( = ) 0) (leaf 0)
   let mem elt = exists (( = ) elt)
 end
 
@@ -87,13 +89,10 @@ module Multiway = struct
   let%test _ = size None = 0
 
   let preorder t =
-    let f v l = Seq.cons v @@ Seq.concat @@ List.to_seq l in
-    fold f Seq.empty t
+    Seq.(fold (fun v l -> cons v @@ concat @@ List.to_seq l) empty t)
 
   let postorder t =
-    let open Seq in
-    let f v l = append (Seq.concat @@ List.to_seq l) (return v) in
-    fold f empty t
+    Seq.(fold (fun v l -> append (concat @@ List.to_seq l) (return v)) empty t)
 
   let to_seq = preorder
   let to_arbitrary_seq = preorder

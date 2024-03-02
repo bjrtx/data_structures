@@ -8,24 +8,15 @@ module Make (Ord : OrderedType) = struct
   type elt = Ord.t
   type t = { size : int; segments : elt list list Lazy.t }
 
-  let rec merge xs ys =
-    match (xs, ys) with
-    | [], ys -> ys
-    | xs, [] -> xs
-    | (x :: xs as first), (y :: ys as snd) ->
-        if Ord.compare x y < 0 then x :: merge xs snd else y :: merge first ys
-
+  let merge = List.merge Ord.compare
   let empty = { size = 0; segments = lazy [] }
 
-  let add x { size; segments } =
+  let add x { size; segments = (lazy s) } =
     let rec add_seg (seg, segs, size) =
       if size mod 2 = 0 then seg :: segs
       else add_seg (merge seg (List.hd segs), List.tl segs, size / 2)
     in
-    {
-      size = succ size;
-      segments = lazy (add_seg ([ x ], Lazy.force segments, size));
-    }
+    { size = succ size; segments = lazy (add_seg ([ x ], s, size)) }
 
   let sort { segments = (lazy s); _ } = List.fold_left merge [] s
 end

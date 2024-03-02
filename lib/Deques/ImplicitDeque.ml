@@ -58,8 +58,8 @@ module Make (Q : QS) = struct
     | Shallow (Three (a, b, c)) ->
         Deep { f = Two (x, a); m = lazy Q.empty; r = Two (b, c) }
     | Shallow d -> Shallow (dcons x d)
-    | Deep { f = Three (a, b, c); m; r } ->
-        Deep { f = Two (x, a); m = lazy (Q.cons (b, c) (Lazy.force m)); r }
+    | Deep { f = Three (a, b, c); m = (lazy s); r } ->
+        Deep { f = Two (x, a); m = lazy (Q.cons (b, c) s); r }
     | Deep deep -> Deep { deep with f = dcons x deep.f }
 
   let head = function Shallow d -> dhead d | Deep { f; _ } -> dhead f
@@ -78,8 +78,8 @@ module Make (Q : QS) = struct
     | Shallow (Three (a, b, c)) ->
         Deep { f = Two (a, b); m = lazy Q.empty; r = Two (c, x) }
     | Shallow d -> Shallow (dsnoc x d)
-    | Deep { r = Three (a, b, c); m; f } ->
-        Deep { f; m = lazy (Q.snoc (a, b) (Lazy.force m)); r = Two (c, x) }
+    | Deep { r = Three (a, b, c); m = (lazy s); f } ->
+        Deep { f; m = lazy (Q.snoc (a, b) s); r = Two (c, x) }
     | Deep deep -> Deep { deep with r = dsnoc x deep.r }
 
   let last = function Shallow d -> dlast d | Deep { r; _ } -> dlast r

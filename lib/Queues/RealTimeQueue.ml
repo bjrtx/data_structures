@@ -27,9 +27,7 @@ let map f q =
     suffix = Stream.map f q.suffix;
   }
 
-let peek = function
-  | { left = (lazy Nil); _ } -> None
-  | { left = (lazy (Cons (hd, _))); _ } -> Some hd
+let peek q = Stream.peek q.left
 
 let pop = function
   | { left = (lazy Nil); _ } -> None

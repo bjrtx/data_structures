@@ -7,7 +7,7 @@ authors: ["bjrtx"]
 license: "LICENSE"
 tags: ["topics" "to describe" "your" "project"]
 homepage: "https://github.com/bjrtx/data_structures"
-doc: "https://url/to/documentation"
+doc: "https://bjrtx.github.io/data_structures"
 bug-reports: "https://github.com/bjrtx/data_structures/issues"
 depends: [
   "ocaml"

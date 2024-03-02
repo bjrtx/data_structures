@@ -25,7 +25,7 @@ let checkCopy q =
 let checkRight q =
   if q.rightLength <= q.leftLength then q
   else
-    let leftCopy = Lazy.force q.left in
+    let (lazy leftCopy) = q.left in
     {
       leftCopy;
       left = lazy List.(append leftCopy (rev q.right));
@@ -50,6 +50,6 @@ let pop q =
       (queue
          {
            q with
-           left = lazy (List.tl (Lazy.force q.left));
+           left = Lazy.map List.tl q.left;
            leftLength = pred q.leftLength;
          })
