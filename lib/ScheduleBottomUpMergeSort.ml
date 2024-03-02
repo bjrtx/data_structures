@@ -9,15 +9,14 @@ module Make (Ord : OrderedType) = struct
   type schedule = elt Stream.t list
   type t = { size : int; segments : (elt Stream.t * schedule) list }
 
-  let less x y = Ord.compare x y < 0
-
   let rec merge xs ys =
     Stream.(
       match (xs, ys) with
       | (lazy Nil), ys -> ys
       | xs, (lazy Nil) -> xs
       | ((lazy (Cons (x, xs))) as first), ((lazy (Cons (y, ys))) as snd) ->
-          if less x y then cons x (merge xs snd) else cons y (merge first ys))
+          if Ord.compare x y <= 0 then cons x (merge xs snd)
+          else cons y (merge first ys))
 
   let rec exec1 =
     Stream.(

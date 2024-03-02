@@ -9,28 +9,31 @@ let print_int_list l =
   print_newline ()
 
 module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
-  let () = Random.self_init ()
-  let l : int list = List.init 100000 (fun _ -> Random.int 1073741823)
-  let b = Sys.time ()
-  let qsort : int list = Q.sort l
-  let first = Sys.time () -. b
-  let () = Printf.printf "Sorting time: %fs\n" first
-  let b = Sys.time ()
-  let sorted = List.sort Int.compare l
-  let second = Sys.time () -. b
-  let () = Printf.printf "Stdlib Sorting time: %fs\n" second
-  let () = Printf.printf "Ratio: %f\n" (first /. second)
+  let sorting_time = ref 0. in
+  let stdlib_sorting_time = ref 0. in
 
-  let () =
+  for _ = 0 to 10 do
+    Random.self_init ();
+    let l : int list = List.init 100000 (fun _ -> Random.int 1073741823) in
+    let b = Sys.time () in
+    let qsort = Q.sort l in
+    sorting_time := !sorting_time +. Sys.time () -. b;
+    let b = Sys.time () in
+    let sorted = List.sort Int.compare l in
+    stdlib_sorting_time := !stdlib_sorting_time +. Sys.time () -. b;
     if qsort <> sorted then
       let () =
         print_int_list qsort;
         print_int_list sorted
       in
       assert false
-end
+  done;
+  Printf.printf "Sorting time: %fs\n" !sorting_time;
+  Printf.printf "Stdlib Sorting time: %fs\n" !stdlib_sorting_time;
+  Printf.printf "Ratio: %f\n" (!sorting_time /. !stdlib_sorting_time)
 
-let () = print_endline "Testing lefist trees"
+  let () = print_endline "Testing lefist trees"
+end
 
 module _ = Tester (Heaps.LeftistTree.Make (Int))
 
@@ -47,7 +50,7 @@ let () = print_endline "Testing binomial heaps"
 module _ = Tester (Heaps.BinomialHeap.Make (Int))
 
 module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
-  let sorting_time = ref 0.  in
+  let sorting_time = ref 0. in
   let stdlib_sorting_time = ref 0. in
 
   for _ = 0 to 10 do
@@ -58,17 +61,17 @@ module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
     sorting_time := !sorting_time +. Sys.time () -. b;
     let b = Sys.time () in
     let sorted = List.sort Int.compare l in
-    stdlib_sorting_time := !stdlib_sorting_time +. Sys.time () -. b  ;
-      if qsort <> sorted then
-        let () =
-          print_int_list qsort;
-          print_int_list sorted
-        in
-        assert false
-    done;
-    Printf.printf "Sorting time: %fs\n" !sorting_time;
-    Printf.printf "Stdlib Sorting time: %fs\n" !stdlib_sorting_time;
-    Printf.printf "Ratio: %f\n" (!sorting_time /. !stdlib_sorting_time)
+    stdlib_sorting_time := !stdlib_sorting_time +. Sys.time () -. b;
+    if qsort <> sorted then
+      let () =
+        print_int_list qsort;
+        print_int_list sorted
+      in
+      assert false
+  done;
+  Printf.printf "Sorting time: %fs\n" !sorting_time;
+  Printf.printf "Stdlib Sorting time: %fs\n" !stdlib_sorting_time;
+  Printf.printf "Ratio: %f\n" (!sorting_time /. !stdlib_sorting_time)
 end
 
 let () = print_endline "Testing bottom-up merge-sort collections."

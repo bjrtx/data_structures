@@ -8,11 +8,9 @@ module MakeBase (Ord : Heap.OrderedType) = struct
   open Tree.Multiway
 
   let size h =
-    h
-    |> List.map (fun o -> Bool.to_int @@ Option.is_some o)
-    |> List.fold_left (fun a b -> (2 * a) + b) 0
-
-  let empty : heap = []
+    List.fold_left (fun a b -> (2 * a) + Bool.to_int (Option.is_some b)) 0 h
+    
+    let empty : heap = []
 
   let to_arbitrary_seq h =
     h |> List.to_seq |> Seq.concat_map Tree.Multiway.to_arbitrary_seq
