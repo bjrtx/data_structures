@@ -22,6 +22,7 @@ val to_seq : 'a t -> 'a Seq.t
 val map : ('a -> 'b) -> 'a t -> 'b t
 (** [to_seq (map f s) = Seq.map f (to_seq s)] *)
 
+val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b t -> 'a
 val peek : 'a t -> 'a option
 val cons : 'a -> 'a t -> 'a t
 val tail : 'a t -> 'a t option

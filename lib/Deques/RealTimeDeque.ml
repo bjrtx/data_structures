@@ -3,11 +3,9 @@ module Make (Const : sig
 end) =
 struct
   type 'a t = {
-    f : 'a Stream.t;
-    lenf : int;
+    f : 'a SizedStream.t;
     sf : 'a Stream.t;
-    r : 'a Stream.t;
-    lenr : int;
+    r : 'a SizedStream.t;
     sr : 'a Stream.t;
   }
 
@@ -15,54 +13,64 @@ struct
 
   let empty =
     {
-      f = Stream.empty;
-      lenf = 0;
+      f = SizedStream.empty;
       sf = Stream.empty;
-      r = Stream.empty;
-      lenr = 0;
+      r = SizedStream.empty;
       sr = Stream.empty;
     }
 
-  let is_empty { lenf; lenr; _ } = lenf + lenr = 0
-  let exec1 = function (lazy Stream.(Cons (_, s))) | s -> s
+  let is_empty { f; r; _ } = SizedStream.is_empty f && SizedStream.is_empty r
 
-  let rec rotate_rev (lazy s) f a =
-    let open Stream in
-    match s with
-    | Nil -> Stream.reverse f @ a
-    | Cons (x, r) -> cons x (rotate_rev r (drop c f) (reverse (take c f) @ a))
+  let exec1 = function
+    | s -> ( match Stream.tail s with Some s -> s | None -> s)
+
+  let rec rotate_rev s f a =
+    let open SizedStream in
+    match (peek s, tail s) with
+    | None, _ -> reverse f @ a
+    | Some x, r ->
+        cons x
+          (rotate_rev
+             (Option.value ~default:empty r)
+             (drop c f)
+             (reverse (take c f) @ a))
 
   let rec rotate_drop i r f =
-    let open Stream in
+    let open SizedStream in
     if i < c then rotate_rev r (drop i f) empty
     else
-      match r with
-      | (lazy (Cons (x, r'))) -> cons x (rotate_drop (i - c) r' (drop c f))
+      match (peek r, tail r) with
+      | Some x, Some r' -> cons x (rotate_drop (i - c) r' (drop c f))
       | _ -> failwith ""
 
-  let queue ({ f; lenf; r; lenr; _ } as q) =
+  let queue ({ f; r; _ } as q) =
+    let lenf = SizedStream.size f and lenr = SizedStream.size r in
     if lenf > (c * lenr) + 1 then
       let i = (lenf + lenr) / 2 in
-      let sf = Stream.take i f in
+      let f' = SizedStream.take i f in
       let r = rotate_drop i r f in
-      { f = sf; lenf = i; sf; r; lenr = lenf + lenr - i; sr = r }
+      {
+        f = f';
+        sf = f' |> SizedStream.to_stream;
+        r;
+        sr = r |> SizedStream.to_stream;
+      }
     else if lenr > (c * lenf) + 1 then
       let i = (lenf + lenr) / 2 in
       let j = lenf + lenr - i in
-      let sf = rotate_drop j f r in
-      let sr = Stream.take j r in
-      { f = sf; lenf = i; sf; r = sr; lenr = j; sr }
+      let f' = rotate_drop j f r in
+      let r' = SizedStream.take j r in
+      {
+        f = f';
+        sf = f' |> SizedStream.to_stream;
+        r = r';
+        sr = r' |> SizedStream.to_stream;
+      }
     else q
 
-  let cons x ({ f; lenf; sf; sr; _ } as q) =
-    {
-      q with
-      f = Stream.cons x f;
-      lenf = succ lenf;
-      sf = exec1 sf;
-      sr = exec1 sr;
-    }
+  let cons x ({ f; sf; sr; _ } as q) =
+    { q with f = SizedStream.cons x f; sf = exec1 sf; sr = exec1 sr }
 
   let head { f; r; _ } =
-    match Stream.peek f with None -> Stream.peek r | s -> s
+    match SizedStream.peek f with None -> SizedStream.peek r | s -> s
 end

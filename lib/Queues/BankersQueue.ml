@@ -1,39 +1,20 @@
-type 'a t = {
-  left : 'a Stream.t;
-  leftLength : int;
-  right : 'a Stream.t;
-  rightLength : int;
-}
+type 'a t = { left : 'a SizedStream.t; right : 'a SizedStream.t }
 (* Representation invariant: leftLength is the length of left (resp. rightLength, right) and leftLength >= rightLength *)
 
-let empty =
-  { left = Stream.empty; leftLength = 0; right = Stream.empty; rightLength = 0 }
+let empty = { left = SizedStream.empty; right = SizedStream.empty }
+let is_empty { left; _ } = SizedStream.is_empty left
 
-let is_empty { leftLength; _ } = leftLength = 0
+let queue ({ left; right } as q) =
+  if SizedStream.size right <= SizedStream.size left then q
+  else SizedStream.{ left = left @ reverse right; right = empty }
 
-let queue ({ left; leftLength; right; rightLength } as q) =
-  if rightLength <= leftLength then q
-  else
-    Stream.
-      {
-        left = left @ reverse right;
-        leftLength = leftLength + rightLength;
-        right = empty;
-        rightLength = 0;
-      }
+let push x q = queue { q with right = SizedStream.cons x q.right }
+let peek { left; _ } = SizedStream.peek left
 
-let push x q =
-  queue
-    { q with right = Stream.cons x q.right; rightLength = succ q.rightLength }
+let pop { left; right } =
+  SizedStream.tail left |> Option.map (fun tl -> { left = tl; right })
 
-let peek { left; _ } = Stream.peek left
+let map f { left; right } =
+  SizedStream.{ left = map f left; right = map f right }
 
-let pop = function
-  | { left = (lazy Nil); _ } -> None
-  | { left = (lazy (Cons (_, tl))); leftLength; _ } as q ->
-      Some (queue { q with left = tl; leftLength = pred leftLength })
-
-let map f ({ left; right; _ } as q) =
-  Stream.{ q with left = map f left; right = map f right }
-
-let size { leftLength; rightLength; _ } = leftLength + rightLength
+let size { left; right } = SizedStream.(size left + size right)
