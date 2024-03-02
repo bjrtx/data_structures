@@ -42,7 +42,7 @@ let dinit = function
 let rec cons : 'a. 'a -> 'a t -> 'a t =
  fun x -> function
   | Shallow (Three (a, b, c)) ->
-      Deep { f = Two (x, a); m = lazy (Shallow Zero); r = Two (b, c) }
+      Deep { f = Two (x, a); m = lazy empty; r = Two (b, c) }
   | Shallow d -> Shallow (dcons x d)
   | Deep { f = Three (a, b, c); m = (lazy s); r } ->
       Deep { f = Two (x, a); m = lazy (cons (b, c) s); r }

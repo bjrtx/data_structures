@@ -1,5 +1,3 @@
-(** Queue with amortized constant time insertion and removal. *)
-
 module SizedList = Lists.SizedList
 
 type 'a t = 'a SizedList.t * 'a SizedList.t
