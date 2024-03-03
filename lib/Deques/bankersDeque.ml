@@ -17,9 +17,8 @@ struct
       let i = (lenf + lenr) / 2 in
       { f = take i f; r = r @ reverse (drop i f) }
     else if lenr > (c * lenf) + 1 then
-      let i = (lenf + lenr) / 2 in
-      let lenr = lenf + lenr - i in
-      { f = f @ reverse (drop lenr r); r = take lenr r }
+      let i = (lenf + lenr + 1) / 2 in
+      { f = f @ reverse (drop i r); r = take i r }
     else q
 
   let cons x { f; r } = { f = cons x f; r } |> queue

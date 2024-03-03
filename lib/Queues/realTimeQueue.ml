@@ -12,11 +12,12 @@ let rec rotate f r a =
         Cons (hf, rotate tf tr (lazy (Cons (hr, a))))
     | _ -> failwith "Invariant failed")
 
-let queue = function
-  | { suffix = (lazy (Cons (_, tl))); _ } as q -> { q with suffix = tl }
-  | { suffix = (lazy Nil); left; right } ->
+let queue ({ suffix; left; right; _ } as q) =
+  match Stream.tail suffix with
+  | None ->
       let left = rotate left right Stream.empty in
       { left; right = []; suffix = left }
+  | Some tl -> { q with suffix = tl }
 
 let push x q = queue { q with right = x :: q.right }
 
@@ -27,8 +28,7 @@ let map f q =
     suffix = Stream.map f q.suffix;
   }
 
-let peek q = Stream.peek q.left
+let peek { left; _ } = Stream.peek left
 
-let pop = function
-  | { left = (lazy Nil); _ } -> None
-  | { left = (lazy (Cons (_, tl))); _ } as q -> Some { q with left = tl }
+let pop ({ left; _ } as q) =
+  Option.map (fun tl -> { q with left = tl }) (Stream.tail left)

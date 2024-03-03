@@ -5,10 +5,11 @@ let empty = { left = SizedStream.empty; right = SizedStream.empty }
 let is_empty { left; _ } = SizedStream.is_empty left
 
 let queue ({ left; right } as q) =
-  if SizedStream.size right <= SizedStream.size left then q
-  else SizedStream.{ left = left @ reverse right; right = empty }
+  SizedStream.(
+    if size right <= size left then q
+    else { left = left @ reverse right; right = empty })
 
-let push x q = queue { q with right = SizedStream.cons x q.right }
+let push x { left; right } = queue { left; right = SizedStream.cons x right }
 let peek { left; _ } = SizedStream.peek left
 
 let pop { left; right } =

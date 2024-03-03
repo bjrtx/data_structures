@@ -11,16 +11,14 @@
 
 (maintainers "bjrtx")
 
-(license LICENSE)
+(license MIT)
 
 (documentation https://bjrtx.github.io/data_structures)
 
 (package
  (name DataStructures)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune ppx_inline_test)
- (tags
-  (topics "to describe" your project)))
+ (synopsis "Various functional data structures")
+ (description "Mostly along the lines of Chris Okasaki's textbook.")
+ (depends ocaml dune ppx_inline_test))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
