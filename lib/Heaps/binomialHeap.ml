@@ -1,11 +1,11 @@
 module MakeBase (Ord : Heap.OrderedType) = struct
   type elt = Ord.t
-  type t = elt Tree.Multiway.t list
+  type t = elt Trees.Multiway.t list
   (* list of possibly empty trees, which will be in decreasing order *)
 
   type heap = t
 
-  open Tree.Multiway
+  open Trees.Multiway
 
   let size h =
     List.fold_left (fun a b -> (2 * a) + Bool.to_int (Option.is_some b)) 0 h
@@ -13,9 +13,9 @@ module MakeBase (Ord : Heap.OrderedType) = struct
   let empty : heap = []
 
   let to_arbitrary_seq h =
-    h |> List.to_seq |> Seq.concat_map Tree.Multiway.to_arbitrary_seq
+    h |> List.to_seq |> Seq.concat_map Trees.Multiway.to_arbitrary_seq
 
-  let leaf elt = [ Tree.Multiway.leaf elt ]
+  let leaf elt = [ Trees.Multiway.leaf elt ]
   let order (Node (_, l)) = List.length l
 
   (* Merge two binomial trees of the same order k, returning a binomial tree of order k + 1. *)
@@ -25,7 +25,7 @@ module MakeBase (Ord : Heap.OrderedType) = struct
 
   let merge (heapA : heap) (heapB : heap) =
     (* add two lists of possibly empty trees. In each list the orders go up by one at each step *)
-    let rec add (listA : elt Tree.Multiway.t list) listB =
+    let rec add (listA : elt Trees.Multiway.t list) listB =
       match (listA, listB) with
       | [], l | l, [] -> l
       | hda :: tla, hdb :: tlb -> (
@@ -46,7 +46,7 @@ module MakeBase (Ord : Heap.OrderedType) = struct
     | [] -> empty
 
   let of_list l = l |> List.map leaf |> merge_in_pairs
-  let map f = List.map (Tree.Multiway.map f)
+  let map f = List.map (Trees.Multiway.map f)
 
   (* find the tree with the smallest root value *)
   let min_of_node_list = function

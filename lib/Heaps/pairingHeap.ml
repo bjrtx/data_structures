@@ -1,16 +1,16 @@
 module MakeBase (Ord : Heap.OrderedType) = struct
   type elt = Ord.t
-  type t = elt Tree.Multiway.t
+  type t = elt Trees.Multiway.t
 
-  open Tree.Multiway
+  open Trees.Multiway
 
-  let size = Tree.Multiway.size
-  let empty = Tree.Multiway.empty
-  let to_arbitrary_seq = Tree.Multiway.to_arbitrary_seq
-  let leaf = Tree.Multiway.leaf
+  let size = Trees.Multiway.size
+  let empty = Trees.Multiway.empty
+  let to_arbitrary_seq = Trees.Multiway.to_arbitrary_seq
+  let leaf = Trees.Multiway.leaf
 
   (** In [map f], [f] {b should} be non-decreasing to preserve the invariant. Arbitrary choice of [f] may break the invariant. *)
-  let map = Tree.Multiway.map
+  let map = Trees.Multiway.map
 
   let merge_trees (Node (v1, l1)) (Node (v2, l2)) =
     if Ord.compare v1 v2 <= 0 then Node (v1, Node (v2, l2) :: l1)

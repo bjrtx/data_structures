@@ -1,5 +1,5 @@
-module BinaryTree = Tree.Binary
-module MultiwayTree = Tree.Multiway
+module BinaryTree = Trees.Binary
+module MultiwayTree = Trees.Multiway
 
 module type OrderedType = sig
   type t

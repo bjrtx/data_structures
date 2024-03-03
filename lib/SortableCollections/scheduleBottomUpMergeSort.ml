@@ -6,6 +6,7 @@ end
 
 module Make (Ord : OrderedType) = struct
   module Stream = Streams.Stream
+
   type elt = Ord.t
   type schedule = elt Stream.t list
   type t = { size : int; segments : (elt Stream.t * schedule) list }

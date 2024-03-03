@@ -1,13 +1,15 @@
 module MakeBase (Ord : Heap.OrderedType) = struct
+  module BTree = Trees.Binary
+
   type elt = Ord.t
   type node = { value : elt; s : int }
-  type t = node Tree.Binary.t
+  type t = node BTree.t
 
-  open Tree.Binary
+  open BTree
 
-  let empty = Tree.Binary.Empty
-  let map f = Tree.Binary.map (fun { value; s } -> { value = f value; s })
-  let size = Tree.Binary.size
+  let empty = BTree.Empty
+  let map f = BTree.map (fun { value; s } -> { value = f value; s })
+  let size = BTree.size
   let svalue = function Empty -> -1 | Node ({ s; _ }, _, _) -> s
 
   let rec merge a b =
@@ -22,13 +24,13 @@ module MakeBase (Ord : Heap.OrderedType) = struct
         let l, r = if svalue l >= svalue r then (l, r) else (r, l) in
         Node ({ s = 1 + min (svalue l) (svalue r); value }, l, r)
 
-  let leaf elt = Tree.Binary.leaf { value = elt; s = 0 }
+  let leaf elt = BTree.leaf { value = elt; s = 0 }
   let push elt = merge (leaf elt)
-  let step = Tree.Binary.node_func (fun { value; _ } l r -> (value, merge l r))
-  let peek t = Tree.Binary.node_func (fun { value; _ } _ _ -> value) t
+  let step = BTree.node_func (fun { value; _ } l r -> (value, merge l r))
+  let peek t = BTree.node_func (fun { value; _ } _ _ -> value) t
 
   let to_arbitrary_seq tree =
-    tree |> Tree.Binary.to_arbitrary_seq |> Seq.map (fun n -> n.value)
+    tree |> BTree.to_arbitrary_seq |> Seq.map (fun n -> n.value)
 
   let rec merge_in_pairs = function
     | a :: b :: tl -> merge (merge a b) (merge_in_pairs tl)

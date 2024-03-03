@@ -14,6 +14,7 @@ val cons : 'a -> 'a t -> 'a t
 val tail : 'a t -> 'a t option
 val push : 'a -> 'a t -> 'a t
 val map : ('a -> 'b) -> 'a t -> 'b t
+val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b t -> 'a
 val concat : 'a t list -> 'a t
 val size : 'a t -> int
 val mem : 'a -> 'a t -> bool
