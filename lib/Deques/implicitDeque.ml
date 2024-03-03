@@ -51,7 +51,7 @@ let rec cons : 'a. 'a -> 'a t -> 'a t =
 let head = function Shallow d -> dhead d | Deep { f; _ } -> dhead f
 
 let rec tail : 'a. 'a t -> 'a t option = function
-  | Shallow d -> Some (Shallow (Option.get @@ dtail d))
+  | Shallow d -> dtail d |> Option.map (fun s -> Shallow s)
   | Deep { f = One _; m = (lazy ps); r } ->
       Some
         (match head ps with
@@ -86,3 +86,9 @@ let rec init : 'a. 'a t -> 'a t option = function
 let%test _ = init empty = None
 let%test _ = init (cons 5 empty) = Some empty
 let%test _ = init (cons 'a' @@ cons 'b' empty) = Some (cons 'a' empty)
+
+(*todo improve *)
+let rec to_seq q =
+  match head q with
+  | None -> Seq.empty
+  | Some h -> Seq.cons h (tail q |> Option.get |> to_seq)

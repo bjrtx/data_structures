@@ -11,8 +11,8 @@ let queue ({ left; right } as q) =
     if size right <= size left then q
     else { left = left @ reverse right; right = empty })
 
-let push x { left; right } = queue { left; right = SizedStream.cons x right }
-let peek { left; _ } = SizedStream.peek left
+let snoc x { left; right } = queue { left; right = SizedStream.cons x right }
+let head { left; _ } = SizedStream.peek left
 
 let pop { left; right } =
   SizedStream.tail left |> Option.map (fun tl -> { left = tl; right })

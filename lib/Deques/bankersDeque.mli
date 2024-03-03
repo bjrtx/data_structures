@@ -2,4 +2,7 @@
 
 module Make (_ : sig
   val c : int
-end) : Deque.S
+end) : sig 
+  include Deque.S
+  val size: 'a t -> int
+end

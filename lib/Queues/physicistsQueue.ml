@@ -36,10 +36,10 @@ let checkRight q =
 
 let queue q = checkCopy @@ checkRight q
 
-let push x q =
+let snoc x q =
   queue { q with right = x :: q.right; rightLength = succ q.rightLength }
 
-let peek = function
+let head = function
   | { leftCopy = []; _ } -> None
   | { leftCopy = hd :: _; _ } -> Some hd
 

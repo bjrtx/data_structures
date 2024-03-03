@@ -1,15 +1,7 @@
 module type QS = sig
-  type 'a t
+  include Deque.S
 
-  val empty : 'a t
   val size : 'a t -> int
-  val is_empty : 'a t -> bool
-  val cons : 'a -> 'a t -> 'a t
-  val head : 'a t -> 'a option
-  val tail : 'a t -> 'a t option
-  val snoc : 'a -> 'a t -> 'a t
-  val last : 'a t -> 'a option
-  val init : 'a t -> 'a t option
 end
 
 module Make (Q : QS) = struct
@@ -91,4 +83,9 @@ module Make (Q : QS) = struct
               lazy (append (snoc r1 (Lazy.force m1)) (cons f2 (Lazy.force m2)));
             r;
           }
+
+  let rec to_seq q =
+    match head q with
+    | Some x -> Seq.(cons x (tail q |> Option.get |> to_seq))
+    | None -> Seq.empty
 end

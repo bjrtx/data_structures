@@ -21,7 +21,7 @@ let queue ({ suffix; left; right; _ } as q) =
       { left; right = []; suffix = left }
   | Some tl -> { q with suffix = tl }
 
-let push x q = queue { q with right = x :: q.right }
+let snoc x q = queue { q with right = x :: q.right }
 
 let map f q =
   {
@@ -30,7 +30,7 @@ let map f q =
     suffix = Stream.map f q.suffix;
   }
 
-let peek { left; _ } = Stream.peek left
+let head { left; _ } = Stream.peek left
 
 let pop ({ left; _ } as q) =
   Option.map (fun tl -> { q with left = tl }) (Stream.tail left)

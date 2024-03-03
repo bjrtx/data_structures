@@ -7,10 +7,10 @@ let is_empty q = q = empty
 let mem elt (l, r) = SizedList.(mem elt l || mem elt r)
 let size (l, r) = SizedList.(size l + size r)
 let rev (l, r) = (r, l)
-let push x (l, r) = (SizedList.cons x l, r)
+let snoc x (l, r) = (SizedList.cons x l, r)
 let map f (l, r) = SizedList.(map f l, map f r)
 
-let peek (l, r) =
+let head (l, r) =
   let rec last = function [] -> None | _ :: l -> last l in
   match SizedList.(to_list l, to_list r) with
   | _, x :: _ -> Some x

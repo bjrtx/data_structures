@@ -83,4 +83,7 @@ struct
     match SStream.tail r with
     | None -> SStream.tail f |> Option.map (Fun.const empty)
     | Some tl -> Some (queue { f; sf = exec2 sf; r = tl; sr = exec2 sr })
+
+  let to_seq { f; r; _ } =
+    Seq.(append (SStream.to_seq f) (SStream.to_seq @@ SStream.reverse r))
 end
