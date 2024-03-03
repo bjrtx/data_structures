@@ -27,6 +27,8 @@ struct
   let exec1 = function
     | s -> ( match Stream.tail s with Some s -> s | None -> s)
 
+  let exec2 s = exec1 (exec1 s)
+
   let rec rotate_rev s f a =
     let open SStream in
     match (peek s, tail s) with
@@ -61,8 +63,24 @@ struct
     else q
 
   let cons x ({ f; sf; sr; _ } as q) =
-    { q with f = SStream.cons x f; sf = exec1 sf; sr = exec1 sr }
+    queue { q with f = SStream.cons x f; sf = exec1 sf; sr = exec1 sr }
 
   let head { f; r; _ } =
     match SStream.peek f with None -> SStream.peek r | s -> s
+
+  let tail { f; r; sf; sr } =
+    match SStream.tail f with
+    | None -> SStream.tail r |> Option.map (Fun.const empty)
+    | Some tl -> Some (queue { f = tl; sf = exec2 sf; r; sr = exec2 sr })
+
+  let snoc x ({ r; sf; sr; _ } as q) =
+    queue { q with r = SStream.cons x r; sf = exec1 sf; sr = exec1 sr }
+
+  let last { f; r; _ } =
+    match SStream.peek r with None -> SStream.peek f | s -> s
+
+  let init { f; r; sf; sr } =
+    match SStream.tail r with
+    | None -> SStream.tail f |> Option.map (Fun.const empty)
+    | Some tl -> Some (queue { f; sf = exec2 sf; r = tl; sr = exec2 sr })
 end

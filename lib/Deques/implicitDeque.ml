@@ -70,9 +70,11 @@ let rec snoc : 'a. 'a -> 'a t -> 'a t =
   | Deep deep -> Deep { deep with r = dsnoc x deep.r }
 
 let last = function Shallow d -> dlast d | Deep { r; _ } -> dlast r
+let%test _ = last empty = None
+let%test _ = last (cons 'x' (cons 'a' empty)) = Some 'a'
 
 let rec init : 'a. 'a t -> 'a t option = function
-  | Shallow d -> Some (Shallow (Option.get @@ dinit d))
+  | Shallow d -> dinit d |> Option.map (fun s -> (Shallow s))
   | Deep { r = One _; m = (lazy ps); f } ->
       Some
         (match last ps with
@@ -80,3 +82,8 @@ let rec init : 'a. 'a t -> 'a t option = function
         | Some (b, c) ->
             Deep { r = Two (b, c); m = lazy (Option.get @@ init ps); f })
   | Deep deep -> Some (Deep { deep with r = Option.get @@ dinit deep.r })
+
+  let%test _ = init empty = None
+  let%test _ = init (cons 5 empty) = Some empty
+  let%test _ = init (cons 'a' @@ cons 'b' empty) = Some (cons 'a' empty)
+
