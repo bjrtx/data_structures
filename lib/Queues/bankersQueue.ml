@@ -1,3 +1,5 @@
+module SizedStream = Streams.SizedStream
+
 type 'a t = { left : 'a SizedStream.t; right : 'a SizedStream.t }
 (* Representation invariant: leftLength is the length of left (resp. rightLength, right) and leftLength >= rightLength *)
 

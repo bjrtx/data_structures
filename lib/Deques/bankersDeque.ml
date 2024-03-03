@@ -4,9 +4,10 @@ end) =
 struct
   let c = Const.c
 
-  open SizedStream
+  open Streams.SizedStream
+  module SStream = Streams.SizedStream
 
-  type 'a t = { f : 'a SizedStream.t; r : 'a SizedStream.t }
+  type 'a t = { f : 'a SStream.t; r : 'a SStream.t }
 
   let empty = { f = empty; r = empty }
   let is_empty { f; r } = is_empty f && is_empty r
@@ -26,16 +27,16 @@ struct
 
   let tail { f; r } =
     match tail f with
-    | None -> if SizedStream.is_empty r then None else Some empty
+    | None -> if SStream.is_empty r then None else Some empty
     | Some tl -> Some { f = tl; r }
 
-  let snoc x { f; r } = { f; r = SizedStream.cons x r } |> queue
+  let snoc x { f; r } = { f; r = SStream.cons x r } |> queue
 
   let last { r; f } =
-    match SizedStream.peek r with None -> SizedStream.peek f | bk -> bk
+    match SStream.peek r with None -> SStream.peek f | bk -> bk
 
   let init { f; r } =
-    match SizedStream.tail r with
-    | None -> if SizedStream.is_empty f then None else Some empty
+    match SStream.tail r with
+    | None -> if SStream.is_empty f then None else Some empty
     | Some tl -> Some { f; r = tl }
 end

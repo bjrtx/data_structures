@@ -1,3 +1,5 @@
+module Stream = Streams.Stream
+
 type 'a t = { left : 'a Stream.t; right : 'a list; suffix : 'a Stream.t }
 
 let empty = Stream.{ left = empty; right = []; suffix = empty }

@@ -49,7 +49,7 @@ let () = print_endline "Testing binomial heaps"
 
 module _ = Tester (Heaps.BinomialHeap.Make (Int))
 
-module BUMSTester (Q : BottomUpMergeSort.Sortable with type elt = int) = struct
+module BUMSTester (Q : SortableCollections.BottomUpMergeSort.Sortable with type elt = int) = struct
   let sorting_time = ref 0. in
   let stdlib_sorting_time = ref 0. in
 
@@ -76,8 +76,8 @@ end
 
 let () = print_endline "Testing bottom-up merge-sort collections."
 
-module _ = BUMSTester (BottomUpMergeSort.Make (Int))
+module _ = BUMSTester (SortableCollections.BottomUpMergeSort.Make (Int))
 
 let () = print_endline "Testing scheduled bottom-up merge-sort collections."
 
-module _ = BUMSTester (ScheduleBottomUpMergeSort.Make (Int))
+module _ = BUMSTester (SortableCollections.ScheduleBottomUpMergeSort.Make (Int))
