@@ -8,13 +8,13 @@ type 'a t =
 let empty = Shallow Zero
 let is_empty = function Shallow Zero -> true | _ -> false
 
-let rec snoc : 'a. 'a -> 'a t -> 'a t =
+let rec push : 'a. 'a -> 'a t -> 'a t =
  fun y -> function
   | Shallow Zero -> Shallow (One y)
   | Shallow (One x) -> Deep { f = Two (x, y); m = lazy empty; r = Zero }
   | Deep ({ r = Zero; _ } as deep) -> Deep { deep with r = One y }
-  | Deep ({ r = One x; m = (lazy q); _ } as deep) ->
-      Deep { deep with m = lazy (snoc (x, y) q); r = Zero }
+  | Deep ({ r = One x; m; _ } as deep) ->
+      Deep { deep with m = Lazy.map (push (x, y)) m; r = Zero }
 
 let peek = function
   | Shallow Zero -> None

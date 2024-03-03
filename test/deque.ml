@@ -1,8 +1,7 @@
-module type QS = sig
+module type Deque = sig
   type 'a t
 
   val empty : 'a t
-  val size : 'a t -> int
   val is_empty : 'a t -> bool
   val cons : 'a -> 'a t -> 'a t
   val head : 'a t -> 'a option
@@ -12,8 +11,12 @@ module type QS = sig
   val init : 'a t -> 'a t option
 end
 
-module Make : functor (_ : QS) -> sig
-  include Deque.S
+module _ : Deque = DataStructures.Deques.BankersDeque.Make (struct
+  let c = 2
+end)
 
-  val append : 'a t -> 'a t -> 'a t
-end
+module _ : Deque = DataStructures.Deques.ImplicitDeque
+
+module _ : Deque = DataStructures.Deques.RealTimeDeque.Make (struct
+  let c = 2
+end)
