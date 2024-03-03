@@ -4,8 +4,8 @@ end) =
 struct
   let c = Const.c
 
-  open Streams.SizedStream
   module SStream = Streams.SizedStream
+  open SStream
 
   type 'a t = { f : 'a SStream.t; r : 'a SStream.t }
 

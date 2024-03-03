@@ -74,7 +74,7 @@ let%test _ = last empty = None
 let%test _ = last (cons 'x' (cons 'a' empty)) = Some 'a'
 
 let rec init : 'a. 'a t -> 'a t option = function
-  | Shallow d -> dinit d |> Option.map (fun s -> (Shallow s))
+  | Shallow d -> dinit d |> Option.map (fun s -> Shallow s)
   | Deep { r = One _; m = (lazy ps); f } ->
       Some
         (match last ps with
@@ -83,7 +83,6 @@ let rec init : 'a. 'a t -> 'a t option = function
             Deep { r = Two (b, c); m = lazy (Option.get @@ init ps); f })
   | Deep deep -> Some (Deep { deep with r = Option.get @@ dinit deep.r })
 
-  let%test _ = init empty = None
-  let%test _ = init (cons 5 empty) = Some empty
-  let%test _ = init (cons 'a' @@ cons 'b' empty) = Some (cons 'a' empty)
-
+let%test _ = init empty = None
+let%test _ = init (cons 5 empty) = Some empty
+let%test _ = init (cons 'a' @@ cons 'b' empty) = Some (cons 'a' empty)

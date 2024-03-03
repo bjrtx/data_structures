@@ -20,7 +20,7 @@ module MakeBase (Ord : Heap.OrderedType) = struct
 
   (* Merge two binomial trees of the same order k, returning a binomial tree of order k + 1. *)
   let merge_trees_of_same_order (Node (va, la) as ta) (Node (vb, lb) as tb) =
-    let () = assert (order ta = order tb) in
+    assert (order ta = order tb);
     if Ord.compare va vb <= 0 then Node (va, tb :: la) else Node (vb, ta :: lb)
 
   let merge (heapA : heap) (heapB : heap) =
