@@ -22,7 +22,7 @@ end
 module _ = Tester (DataStructures.Deques.ImplicitDeque)
 
 module Bankers2 = DataStructures.Deques.BankersDeque.Make (struct
-let c = 2
+  let c = 2
 end)
 
 module _ = Tester (Bankers2)
@@ -30,4 +30,5 @@ module _ = Tester (Bankers2)
 module _ = Tester (DataStructures.Deques.RealTimeDeque.Make (struct
   let c = 2
 end))
-module _ = Tester (DataStructures.Deques.SimpleCatenableDeque.Make(Bankers2))
+
+module _ = Tester (DataStructures.Deques.SimpleCatenableDeque.Make (Bankers2))

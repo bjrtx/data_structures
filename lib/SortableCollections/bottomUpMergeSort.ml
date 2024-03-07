@@ -1,10 +1,4 @@
-module type OrderedType = sig
-  type t
-
-  val compare : t -> t -> int
-end
-
-module Make (Ord : OrderedType) = struct
+module Make (Ord : OrderedType.S) = struct
   type elt = Ord.t
   type t = { size : int; segments : elt list list Lazy.t }
 
@@ -19,13 +13,4 @@ module Make (Ord : OrderedType) = struct
     { size = succ size; segments = lazy (add_seg ([ x ], s, size)) }
 
   let sort { segments = (lazy s); _ } = List.fold_left merge [] s
-end
-
-module type Sortable = sig
-  type elt
-  type t
-
-  val empty : t
-  val add : elt -> t -> t
-  val sort : t -> elt list
 end

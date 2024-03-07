@@ -1,3 +1,5 @@
+(** Lazy streams with constant-time size function. *)
+
 type 'a t
 
 val size : 'a t -> int

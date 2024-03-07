@@ -49,8 +49,7 @@ let () = print_endline "Testing binomial heaps"
 
 module _ = Tester (Heaps.BinomialHeap.Make (Int))
 
-module BUMSTester
-    (Q : SortableCollections.BottomUpMergeSort.Sortable with type elt = int) =
+module BUMSTester (Q : SortableCollections.Sortable.S with type elt = int) =
 struct
   let sorting_time = ref 0. in
   let stdlib_sorting_time = ref 0. in

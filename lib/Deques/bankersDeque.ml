@@ -12,7 +12,6 @@ struct
   let empty = { f = empty; r = empty }
   let is_empty { f; r } = is_empty f && is_empty r
 
-
   let queue ({ f; r } as q) =
     let lenf = size f and lenr = size r in
     if lenf > (c * lenr) + 1 then
@@ -42,6 +41,5 @@ struct
     | Some tl -> Some { f; r = tl }
 
   let to_seq { f; r } = Seq.(append (to_seq f) (to_seq @@ SStream.reverse r))
-  let size {f; r} = size f + size r
-
+  let size { f; r } = size f + size r
 end

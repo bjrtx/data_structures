@@ -1,10 +1,4 @@
-module type OrderedType = sig
-  type t
-
-  val compare : t -> t -> int
-end
-
-module Make (Ord : OrderedType) = struct
+module Make (Ord : OrderedType.S) = struct
   module Stream = Streams.Stream
 
   type elt = Ord.t
@@ -48,13 +42,4 @@ module Make (Ord : OrderedType) = struct
   let sort { segments; _ } =
     List.fold_left (fun acc (x, _) -> merge acc x) Stream.empty segments
     |> Stream.to_list
-end
-
-module type Sortable = sig
-  type elt
-  type t
-
-  val empty : t
-  val add : elt -> t -> t
-  val sort : t -> elt list
 end
