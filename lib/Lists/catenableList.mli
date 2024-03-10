@@ -1,3 +1,8 @@
+(** Catenable lists after Okasaki.
+    
+Catenable lists are parameterised by a queue data structure. *)
+
+(** Input type of the Make functor: queue interface. *)
 module type S = sig
   type 'a t
 
@@ -8,7 +13,8 @@ module type S = sig
   val pop : 'a t -> 'a t option
 end
 
-module CatenableList : functor (_ : S) -> sig
+(** Functor for building catenable lists from a queue module. *)
+module Make : functor (_ : S) -> sig
   type 'a t
 
   val empty : 'a t

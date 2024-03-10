@@ -8,7 +8,7 @@ module type S = sig
   val pop : 'a t -> 'a t option
 end
 
-module CatenableList (Q : S) = struct
+module Make (Q : S) = struct
   type 'a t = Empty | Cons of 'a * 'a t Lazy.t Q.t
 
   let empty = Empty
