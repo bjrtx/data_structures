@@ -1,3 +1,5 @@
+(* Lists with a zipper. *)
+
 type 'a t = 'a list * 'a list
 
 let empty = ([], [])
