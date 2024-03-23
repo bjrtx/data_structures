@@ -16,7 +16,10 @@ val pop : 'a t -> 'a t option
 val peek : 'a t -> 'a option
 val is_empty : 'a t -> bool
 val size : 'a t -> int
+
 val mem : 'a -> 'a t -> bool
+(** [mem x s] is [true] iff [x] is an element of [s]. *)
+
 val to_seq : 'a t -> 'a Seq.t
 val to_arbitrary_seq : 'a t -> 'a Seq.t
 val iter : ('a -> unit) -> 'a t -> unit

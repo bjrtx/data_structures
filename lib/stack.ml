@@ -14,5 +14,5 @@ let size (_, n) = n
 let mem x (l, _) = List.mem x l
 let to_seq (l, _) = List.to_seq l
 let to_arbitrary_seq = to_seq
-let iter (f : _ -> unit) (l, _) = List.iter f l
+let iter f (l, _) = List.iter f l
 let fold f accu (l, _) = List.fold_left f accu l
