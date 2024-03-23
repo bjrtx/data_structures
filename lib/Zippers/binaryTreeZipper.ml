@@ -8,6 +8,14 @@ type 'a context =
 type 'a t = 'a tree * 'a context list
 
 let empty = (Empty, [])
+let of_tree t = (t, [])
+
+let to_tree (t, contexts) =
+  List.fold_left
+    (fun tree (Context { isRight; parent; sibling }) ->
+      let l, r = if isRight then (sibling, tree) else (tree, sibling) in
+      Node (l, parent, r))
+    t contexts
 
 let left = function
   | t, Context { sibling; isRight = true; parent } :: tl ->
