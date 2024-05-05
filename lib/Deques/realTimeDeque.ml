@@ -51,12 +51,12 @@ struct
   let queue ({ f; r; _ } as q) =
     let lenf = SStream.size f and lenr = SStream.size r in
     if lenf > (c * lenr) + 1 then
-      let i = (lenf + lenr) / 2 in
+      let i = (lenf + lenr) asr 1 in
       let r = rotate_drop i r f in
       let f = SStream.take i f in
       { f; sf = f |> SStream.to_stream; r; sr = r |> SStream.to_stream }
     else if lenr > (c * lenf) + 1 then
-      let j = (lenf + lenr + 1) / 2 in
+      let j = (lenf + lenr + 1) asr 1 in
       let f = rotate_drop j f r in
       let r = SStream.take j r in
       { f; sf = f |> SStream.to_stream; r; sr = r |> SStream.to_stream }

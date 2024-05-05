@@ -31,7 +31,7 @@ module Make (Ord : OrderedType.S) = struct
         match segs with
         | [] -> failwith "Size info is wrong"
         | (xs', _) :: segs' ->
-            add_seg (merge seg xs', segs', size / 2, seg :: rsched)
+            add_seg (merge seg xs', segs', size asr 1, seg :: rsched)
     in
     {
       size = succ size;

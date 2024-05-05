@@ -201,8 +201,8 @@ module RBTree (Ord : OrderedType) = struct
     | Empty -> leaf elt
     | Node (c, h, v, l, r) ->
         let cmp = Ord.compare elt v in
-        if cmp <= 0 then Node (c, h, v, push elt l, r)
-        else Node (c, h, v, l, push elt r)
+        let l, r = if cmp <= 0 then (push elt l, r) else (l, push elt r) in
+        Node (c, h, v, l, r)
 
   let of_list = List.fold_left (fun t x -> push x t) Empty
   let sort l = l |> of_list |> to_ordered_seq |> List.of_seq

@@ -15,10 +15,10 @@ struct
   let queue ({ f; r } as q) =
     let lenf = size f and lenr = size r in
     if lenf > (c * lenr) + 1 then
-      let i = (lenf + lenr) / 2 in
+      let i = (lenf + lenr) asr 1 in
       { f = take i f; r = r @ reverse (drop i f) }
     else if lenr > (c * lenf) + 1 then
-      let i = (lenf + lenr + 1) / 2 in
+      let i = (lenf + lenr + 1) asr 1 in
       { f = f @ reverse (drop i r); r = take i r }
     else q
 

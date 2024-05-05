@@ -8,7 +8,7 @@ module Make (Ord : OrderedType.S) = struct
   let add x { size; segments = (lazy s) } =
     let rec add_seg (seg, segs, size) =
       if size mod 2 = 0 then seg :: segs
-      else add_seg (merge seg (List.hd segs), List.tl segs, size / 2)
+      else add_seg (merge seg (List.hd segs), List.tl segs, size asr 1)
     in
     { size = succ size; segments = lazy (add_seg ([ x ], s, size)) }
 

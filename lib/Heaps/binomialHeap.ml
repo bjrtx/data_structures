@@ -8,7 +8,7 @@ module MakeBase (Ord : Heap.OrderedType) = struct
   open Trees.Multiway
 
   let size h =
-    List.fold_left (fun a b -> (2 * a) + Bool.to_int (Option.is_some b)) 0 h
+    List.fold_left (fun a b -> (a lsl 1) + Bool.to_int (Option.is_some b)) 0 h
 
   let empty : heap = []
 
