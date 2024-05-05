@@ -8,6 +8,7 @@ let print_int_list l =
     l;
   print_newline ()
 
+(** Tester module for int Queues *)
 module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
   let sorting_time = ref 0. in
   let stdlib_sorting_time = ref 0. in
@@ -31,9 +32,9 @@ module Tester (Q : Heaps.Heap.PriorityQueue with type elt = int) = struct
   Printf.printf "Sorting time: %fs\n" !sorting_time;
   Printf.printf "Stdlib Sorting time: %fs\n" !stdlib_sorting_time;
   Printf.printf "Ratio: %f\n" (!sorting_time /. !stdlib_sorting_time)
-
-  let () = print_endline "Testing lefist trees"
 end
+
+let () = print_endline "Testing lefist trees"
 
 module _ = Tester (Heaps.LeftistTree.Make (Int))
 
